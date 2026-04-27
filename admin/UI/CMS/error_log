@@ -1,0 +1,180 @@
+[08-Oct-2025 19:15:02 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[09-Oct-2025 15:38:32 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Oct-2025 15:16:51 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Oct-2025 15:20:20 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Oct-2025 15:49:47 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Oct-2025 15:52:34 Asia/Shanghai] PHP Warning:  preg_replace(): The /e modifier is no longer supported, use preg_replace_callback instead in /home1/sinelect/public_html/admin/smtpmail/classes/class.phpmailer.php on line 1697
+[10-Oct-2025 20:36:45 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[15-Oct-2025 15:02:01 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[15-Oct-2025 23:54:32 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[24-Oct-2025 00:15:19 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[24-Oct-2025 00:17:34 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1267: Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8mb4_general_ci,COERCIBLE) for operation 'like'] in EXECUTE("SELECT user_address_id FROM tbl_user_address WHERE user_id ='1830' 
+				AND address LIKE '%ul. Piątkowska 163
+%' AND city LIKE '%Poznań%'
+				AND state LIKE '%-%' AND zip LIKE '%60-650%'
+				AND country_id ='143' ") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1267, 'Illegal mix of ...', 'SELECT user_add...', false, Object(ADODB_mysqli))
+#1 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1229): ADOConnection->_Execute('SELECT user_add...', false)
+#2 /home1/sinelect/public_html/admin/Dao/PersistentManager.php(39): ADOConnection->Execute('SELECT user_add...', false)
+#3 /home1/sinelect/public_html/admin/Dao/HomeDao.php(1294): PersistentManager- in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[24-Oct-2025 00:17:43 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1267: Illegal mix of collations (latin1_swedish_ci,IMPLICIT) and (utf8mb4_general_ci,COERCIBLE) for operation 'like'] in EXECUTE("SELECT user_address_id FROM tbl_user_address WHERE user_id ='1830' 
+				AND address LIKE '%ul. Piątkowska 163
+%' AND city LIKE '%Poznań%'
+				AND state LIKE '%-%' AND zip LIKE '%60-650%'
+				AND country_id ='143' ") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1267, 'Illegal mix of ...', 'SELECT user_add...', false, Object(ADODB_mysqli))
+#1 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1229): ADOConnection->_Execute('SELECT user_add...', false)
+#2 /home1/sinelect/public_html/admin/Dao/PersistentManager.php(39): ADOConnection->Execute('SELECT user_add...', false)
+#3 /home1/sinelect/public_html/admin/Dao/HomeDao.php(1294): PersistentManager- in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[24-Oct-2025 00:25:55 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[31-Oct-2025 21:19:38 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[06-Nov-2025 21:11:38 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[11-Nov-2025 04:23:34 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Nov-2025 23:07:13 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[20-Nov-2025 03:56:49 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[20-Nov-2025 04:04:15 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[20-Nov-2025 14:58:06 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[21-Nov-2025 15:50:36 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[27-Nov-2025 16:14:45 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[01-Dec-2025 23:00:12 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[03-Dec-2025 16:47:36 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Sullivan (T.S.)','','1','3681','Yes')' at line 5] in EXECUTE("INSERT INTO tbl_user (user_type_id, name, communication_phone_num_isd, communication_phone_num, communication_mobile_num_isd,
+ 				communication_mobile_num, communication_email_id, erp_password, company_name, designation, account_activation_flag, random_activation_key,verified_flag) 
+				VALUES('2','Tomaz Slivnik','44','-'
+				,'44','-','slivnik@tomaz.name','Kem4yqTBQtMo2AukJhqjxCiGuHT3lBGSaq6DBoTqfUw='
+				,' Diarmuid O'Sullivan (T.S.)','','1','3681','Yes')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+ in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[03-Dec-2025 16:47:41 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Sullivan (T.S.)','','1','7428','Yes')' at line 5] in EXECUTE("INSERT INTO tbl_user (user_type_id, name, communication_phone_num_isd, communication_phone_num, communication_mobile_num_isd,
+ 				communication_mobile_num, communication_email_id, erp_password, company_name, designation, account_activation_flag, random_activation_key,verified_flag) 
+				VALUES('2','Tomaz Slivnik','44','-'
+				,'44','-','slivnik@tomaz.name','J2hYdtqcXLXLqe6BivQsawrt8ZLNoBDGDNkKLUY7KRY='
+				,' Diarmuid O'Sullivan (T.S.)','','1','7428','Yes')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+ in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[03-Dec-2025 16:54:53 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Sullivan (T.S.)','','1','9879','Yes')' at line 5] in EXECUTE("INSERT INTO tbl_user (user_type_id, name, communication_phone_num_isd, communication_phone_num, communication_mobile_num_isd,
+ 				communication_mobile_num, communication_email_id, erp_password, company_name, designation, account_activation_flag, random_activation_key,verified_flag) 
+				VALUES('2','Tomaz Slivnik','44','-'
+				,'44','-','slivnik@tomaz.name','vE6385D8PsjVnyyBm2ao2vG+2dcKmbS9Y6UWrxDfowg='
+				,'Diarmuid O'Sullivan (T.S.)','','1','9879','Yes')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+# in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[03-Dec-2025 16:54:59 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Sullivan (T.S.)','','1','4835','Yes')' at line 5] in EXECUTE("INSERT INTO tbl_user (user_type_id, name, communication_phone_num_isd, communication_phone_num, communication_mobile_num_isd,
+ 				communication_mobile_num, communication_email_id, erp_password, company_name, designation, account_activation_flag, random_activation_key,verified_flag) 
+				VALUES('2','Tomaz Slivnik','44','-'
+				,'44','-','slivnik@tomaz.name','nyYfOOUDs+xixbFUmlsIpNi3HWtpccieDKaF48P43Bg='
+				,'Diarmuid O'Sullivan (T.S.)','','1','4835','Yes')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+# in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[03-Dec-2025 17:21:34 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Sullivan (T.S.)','','1','6167','Yes')' at line 5] in EXECUTE("INSERT INTO tbl_user (user_type_id, name, communication_phone_num_isd, communication_phone_num, communication_mobile_num_isd,
+ 				communication_mobile_num, communication_email_id, erp_password, company_name, designation, account_activation_flag, random_activation_key,verified_flag) 
+				VALUES('2','Tomaz Slivnik','44','-'
+				,'44','-','slivnik@tomaz.name','lWQx67M98E54jnLumT4dpKvSz+5Nc/+aZ0jvqiplIv8='
+				,'Diarmuid O'Sullivan (T.S.)','','1','6167','Yes')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+# in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[04-Dec-2025 21:52:22 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[05-Dec-2025 19:36:05 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[09-Dec-2025 16:00:51 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Dec-2025 17:06:46 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Dec-2025 20:07:34 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[11-Dec-2025 03:48:24 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Dec-2025 22:09:50 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[21-Dec-2025 23:48:11 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Dec-2025 21:52:07 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[09-Jan-2026 22:45:24 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[13-Jan-2026 19:42:38 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[13-Jan-2026 19:50:52 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[16-Jan-2026 18:55:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 654
+[16-Jan-2026 18:55:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 686
+[16-Jan-2026 18:55:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 745
+[16-Jan-2026 18:55:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 777
+[16-Jan-2026 19:06:08 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[16-Jan-2026 19:50:11 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[17-Jan-2026 16:27:02 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Jan-2026 15:28:43 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Jan-2026 16:07:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 654
+[19-Jan-2026 16:07:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 686
+[19-Jan-2026 16:07:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 745
+[19-Jan-2026 16:07:35 Asia/Shanghai] PHP Warning:  Invalid argument supplied for foreach() in /home1/sinelect/public_html/admin/UI/CMS/AddEditProduct.php on line 777
+[19-Jan-2026 16:45:51 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Jan-2026 13:57:22 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Jan-2026 15:48:05 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Jan-2026 21:06:17 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Jan-2026 21:15:16 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[23-Jan-2026 19:54:23 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[23-Jan-2026 20:51:19 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[26-Jan-2026 14:13:22 Asia/Shanghai] PHP Warning:  preg_replace(): The /e modifier is no longer supported, use preg_replace_callback instead in /home1/sinelect/public_html/admin/smtpmail/classes/class.phpmailer.php on line 1697
+[28-Jan-2026 05:15:35 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[29-Jan-2026 15:27:45 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[30-Jan-2026 00:16:08 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[31-Jan-2026 21:16:38 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[06-Feb-2026 00:25:35 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[06-Feb-2026 19:42:47 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Feb-2026 16:50:19 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[12-Feb-2026 16:53:29 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[13-Feb-2026 00:41:16 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[13-Feb-2026 00:43:28 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Feb-2026 00:30:27 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[20-Feb-2026 20:03:30 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[26-Feb-2026 18:14:32 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[03-Mar-2026 01:13:41 Asia/Shanghai] PHP Warning:  preg_replace(): The /e modifier is no longer supported, use preg_replace_callback instead in /home1/sinelect/public_html/admin/smtpmail/classes/class.phpmailer.php on line 1697
+[03-Mar-2026 01:35:06 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[04-Mar-2026 00:38:45 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[04-Mar-2026 19:26:32 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[05-Mar-2026 01:08:25 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[11-Mar-2026 01:59:58 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[11-Mar-2026 15:12:39 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[11-Mar-2026 15:13:46 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[12-Mar-2026 16:33:43 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Mar-2026 04:56:29 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Mar-2026 14:04:57 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Mar-2026 14:05:39 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[19-Mar-2026 14:06:40 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[25-Mar-2026 20:36:52 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[26-Mar-2026 11:57:06 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[27-Mar-2026 23:44:06 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[28-Mar-2026 00:18:42 Asia/Shanghai] PHP Warning:  preg_replace(): The /e modifier is no longer supported, use preg_replace_callback instead in /home1/sinelect/public_html/admin/smtpmail/classes/class.phpmailer.php on line 1697
+[01-Apr-2026 14:33:53 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[09-Apr-2026 17:00:22 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[09-Apr-2026 17:07:34 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Apr-2026 17:06:10 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Apr-2026 17:07:20 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[10-Apr-2026 22:39:14 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[14-Apr-2026 01:24:33 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[22-Apr-2026 22:12:51 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601
+[27-Apr-2026 16:15:28 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Europe - Building 904,
+
+','CERN PREVESSIN',
+					'-','01630','France','','22 7' at line 2] in EXECUTE("INSERT INTO tbl_user_address (user_id, address, city, state, zip, country, landmark, delivery_phone_no, user_name, 
+					eu_vat, company_name, mobile_country_code, country_id) VALUES('1901','CERN Site de Prevessin ,
+Route de l'Europe - Building 904,
+
+','CERN PREVESSIN',
+					'-','01630','France','','22 76 72248',
+					'Dr. Antonio Sidoti','','CERN','41'
+					,'63')") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'INSERT INTO tbl...', false, Object(ADODB_mysqli))
+#1 /home1/sinelect/public_html/admin/Dao/adodb/ad in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[27-Apr-2026 16:15:32 Asia/Shanghai] PHP Fatal error:  Uncaught Exception: Error in DB- Transaction Rolled BackADODB_Exception: mysqli error: [1064: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'Europe - Building 904,
+
+%' AND city LIKE '%CERN PREVESSIN%'
+				AND state LIKE' at line 2] in EXECUTE("SELECT user_address_id FROM tbl_user_address WHERE user_id ='1901' 
+				AND address LIKE '%CERN Site de Prevessin ,
+Route de l'Europe - Building 904,
+
+%' AND city LIKE '%CERN PREVESSIN%'
+				AND state LIKE '%-%' AND zip LIKE '%01630%'
+				AND country_id ='63' ") in /home1/sinelect/public_html/admin/Dao/adodb/adodb-exceptions.inc.php:80
+Stack trace:
+#0 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1265): adodb_throw('mysqli', 'EXECUTE', 1064, 'You have an err...', 'SELECT user_add...', false, Object(ADODB_mysqli))
+#1 /home1/sinelect/public_html/admin/Dao/adodb/adodb.inc.php(1229): ADOConnection->_Execute('SELECT user_add...', false)
+#2 /home1/sinelect/public_html/admi in /home1/sinelect/public_html/admin/Dao/HomeDao.php on line 1382
+[27-Apr-2026 16:18:11 Asia/Shanghai] PHP Warning:  Illegal string offset 'url' in /home1/sinelect/public_html/website/tcpdf/tcpdf.php on line 22601

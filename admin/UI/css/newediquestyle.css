@@ -1,0 +1,15 @@
+table 
+{
+ font-size:12px;
+ text-align:center;
+}
+
+table  tr
+{
+text-align:center;
+}
+table  th
+{
+text-align:center;
+font-weight:normal;
+}

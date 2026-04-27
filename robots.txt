@@ -1,0 +1,1 @@
+User-agent: *Sitemap: http://www.sinelec-tech.com/website/sitemap.xml

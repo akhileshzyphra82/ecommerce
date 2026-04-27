@@ -1,0 +1,58 @@
+<table width="900" border="1" cellpadding="10">
+  <tr>
+    <td width="173"  style="font-family:Open Sans, Arial, sans-serif; font-size:13px; line-height:20px;">
+    	<img src="images/Logo.png" alt="logo" width="137" height="39" longdesc="https://sinelec-tech.com/"><br/>
+   	Brachvogelweg 9, 85375 Neufahrn, Germany</td>
+    <td colspan="250" align="left"  style="font-family:Open Sans, Arial, sans-serif; font-size:12px; line-height:20px;"><strong>Ph:</strong> +49 (0)8165-990617<br/>
+      <strong>Fax:</strong> +49 (0)8165-9906178<br/>
+contact@sinelec-tech.com<br/>
+https://sinelec-tech.com</td>
+    <td width="208" align="left"  style="font-family:Open Sans, Arial, sans-serif; font-size:12px; line-height:20px;">
+    	<strong><u>Bank Account Details</u></strong><br/> <strong>Bank:</strong> Sparkasse Freising, Germany<br/>
+   	  <strong>IBAN:</strong> DE12 7005 1003 0025 7945 61<br/>
+    	<strong>BIC: </strong>BYLADEM1FSI</td>
+    <td width="191" align="left" style="font-family:Open Sans, Arial, sans-serif; font-size:12px; line-height:20px;">
+   	  <strong>Invoice No:</strong> '.$orderDetails[0]->ORDER_ID.' <br/> 
+   	  <strong>Date:</strong>'.$orderDetails[0]->ORDER_DATE.'<br/> 
+   	  <strong>Transaction:</strong>'.$orderDetails[0]->TRANSACTION_ID.'
+    </td>
+  </tr>
+</table>
+<table width="900" border="1" cellpadding="10">
+  
+  <tr>
+    <td colspan="2">
+        <strong>Customer Name:</strong>'.$orderDetails[0]->USER_NAME.'&nbsp;&nbsp;<strong>Ph:</strong>'.$orderDetails[0]->COMMUNICATION_MOBILE_NUM.'
+        <strong>Email:</strong>'.$orderDetails[0]->COMMUNICATION_EMAIL_ID.'
+    </td>
+   </tr> 
+  <tr>
+    <td width="450" valign="top">
+        <table width="100%" border="1" cellpadding="10">
+          <tr>
+            <td width="100%"  bgcolor="#999999"><strong><font color="#FFFFFF" size="+1">Shipping / Delivery Address:</font></strong></td>
+          </tr>
+          <tr>
+            <td width="100%" style="font-family:Open Sans, Arial, sans-serif; font-size:13px; line-height:20px;">
+            	<strong>Address: '.$orderDetails[0]->ADDRESS.' </strong> <br/> <strong>State: </strong>'.$orderDetails[0]->STATE.'<br/> 
+                <strong>City: </strong>'.$orderDetails[0]->CITY.' <br/> <strong>Zip No:</strong>'.$orderDetails[0]->ZIP.'
+            </td>
+          </tr>
+        </table>
+    </td>
+    <td width="450" align="left" valign="top">
+       <table width="100%" border="1" cellpadding="10">
+          <tr>
+            <td width="100%"  bgcolor="#999999"><strong><font color="#FFFFFF" size="+1">Billing Address:</font></strong></td>
+          </tr>
+          <tr>
+            <td width="100%" style="font-family:Open Sans, Arial, sans-serif; font-size:13px; line-height:20px;">
+                <strong>Address: '.$orderDetails[0]->ADDRESS.' </strong> <br/> <strong>State: </strong>'.$orderDetails[0]->STATE.'<br/> 
+                <strong>City: </strong>'.$orderDetails[0]->CITY.' <br/> <strong>Zip No:</strong>'.$orderDetails[0]->ZIP.'<br/> 
+                <strong>VAT No: </strong>'.$orderDetails[0]->EU_VAT.'           
+            </td>
+          </tr>
+        </table>
+    </td>
+  </tr>
+</table>

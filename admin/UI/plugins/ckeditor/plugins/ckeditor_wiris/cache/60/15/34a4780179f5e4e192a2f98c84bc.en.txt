@@ -1,0 +1,1 @@
+{"result":{"text":"24 divided by 8"},"status":"ok"}

@@ -1,0 +1,1 @@
+{"result":{"text":"2 over 3 a cubed minus 7 over 2 a squared plus 4"},"status":"ok"}
