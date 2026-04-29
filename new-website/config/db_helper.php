@@ -12,6 +12,7 @@ class MySQLDB {
             $password = "";
             $database = "sinelect_panel_productdb";
         } else {
+            $serverName = "sinelec-tech.com ";
             $username = "sinelect_db";
             $password = "0W@IdwHzWxE&";
             $database = "sinelect_panel_productdb";
