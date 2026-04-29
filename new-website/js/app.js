@@ -130,19 +130,25 @@ function delivEst() {
 
 /* ── State ───────────────────────────────────────────────────── */
 const S = {
-  catFilter:  CATALOG_INIT.cat  || null,
+  catFilter:    CATALOG_INIT.cat    || null,
   subcatFilter: CATALOG_INIT.subcat || null,
-  mfrFilter:  CATALOG_INIT.mfr  || null,
-  query:      CATALOG_INIT.q    || '',
+  mfrFilter:    CATALOG_INIT.mfr    || null,
+  query:        CATALOG_INIT.q      || '',
+  expandedCats: CATALOG_INIT.cat ? [CATALOG_INIT.cat] : [],
   filters: {
-    mfrs:    CATALOG_INIT.mfr ? [CATALOG_INIT.mfr] : [],
-    minP:    0,
-    maxP:    999999,
-    inStock: false,
-    isNew:   CATALOG_INIT.isNew || false,
+    mfrs:        CATALOG_INIT.mfr ? [CATALOG_INIT.mfr] : [],
+    minP:        0,
+    maxP:        999999,
+    inStock:     false,
+    isNew:       CATALOG_INIT.isNew || false,
+    minRating:   0,
+    packages:    [],
+    filterQuery: '',
   },
   sort:    'featured',
   view:    'grid',
+  page:    1,
+  perPage: 16,
   pdpId:   CURRENT_PRODUCT ? CURRENT_PRODUCT.id : null,
   heroIdx: 0,
   heroTimer: null,
@@ -529,10 +535,18 @@ function getProductSubcategory(product) {
 /* ── Catalog ─────────────────────────────────────────────────── */
 function filteredProducts() {
   let P = [...STORE_DATA.products];
-  if (S.catFilter)              P = P.filter(p => p.category === S.catFilter);
-  if (S.subcatFilter)           P = P.filter(p => getProductSubcategory(p).toLowerCase() === S.subcatFilter.toLowerCase());
-  if (S.query)                  P = P.filter(p => p.name.toLowerCase().includes(S.query.toLowerCase()) || p.sku.toLowerCase().includes(S.query.toLowerCase()) || (p.manufacturer || p.brand || '').toLowerCase().includes(S.query.toLowerCase()));
-  if (S.filters.mfrs.length > 0) P = P.filter(p => S.filters.mfrs.includes(p.manufacturer || p.brand));
+  if (S.catFilter)                  P = P.filter(p => p.category === S.catFilter);
+  if (S.subcatFilter)               P = P.filter(p => getProductSubcategory(p).toLowerCase() === S.subcatFilter.toLowerCase());
+  const q = S.query || S.filters.filterQuery;
+  if (q)                            P = P.filter(p =>
+    p.name.toLowerCase().includes(q.toLowerCase()) ||
+    p.sku.toLowerCase().includes(q.toLowerCase()) ||
+    (p.manufacturer || p.brand || '').toLowerCase().includes(q.toLowerCase()) ||
+    (p.description || '').toLowerCase().includes(q.toLowerCase())
+  );
+  if (S.filters.mfrs.length > 0)   P = P.filter(p => S.filters.mfrs.includes(p.manufacturer || p.brand));
+  if (S.filters.minRating > 0)     P = P.filter(p => (p.rating || 0) >= S.filters.minRating);
+  if (S.filters.packages.length > 0) P = P.filter(p => S.filters.packages.includes(p.package));
   P = P.filter(p => {
     const price = p.priceBreaks ? p.priceBreaks[0].price : (p.price || 0);
     return price >= S.filters.minP && price <= S.filters.maxP;
@@ -550,10 +564,44 @@ function filteredProducts() {
   return P;
 }
 
+function goToPage(n) { S.page = n; renderCatalog(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+function renderToolbarPagination(total, page, perPage) {
+  const el = document.getElementById('toolbarPagination');
+  if (!el) return;
+  const totalPages = Math.ceil(total / perPage);
+  if (total === 0) { el.innerHTML = '<span class="tpg-total">0 results</span>'; return; }
+
+  const pageNums = [];
+  const delta = 1;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || (i >= page - delta && i <= page + delta)) pageNums.push(i);
+    else if (pageNums[pageNums.length - 1] !== '…') pageNums.push('…');
+  }
+
+  const btns = pageNums.map(n =>
+    n === '…'
+      ? `<span class="tpg-ellipsis">…</span>`
+      : `<button class="tpg-btn ${n === page ? 'active' : ''}" onclick="goToPage(${n})">${n}</button>`
+  ).join('');
+
+  el.innerHTML = `
+    <span class="tpg-total">${total} result${total !== 1 ? 's' : ''}</span>
+    <button class="tpg-nav" onclick="goToPage(${page - 1})" ${page <= 1 ? 'disabled' : ''}>&#8249;</button>
+    ${btns}
+    <button class="tpg-nav" onclick="goToPage(${page + 1})" ${page >= totalPages ? 'disabled' : ''}>&#8250;</button>`;
+}
+
 function renderCatalog() {
-  const P = filteredProducts();
+  const allP = filteredProducts();
   const catName = S.catFilter ? (STORE_DATA.categories.find(c => c.id === S.catFilter)?.name || 'Products') : 'All Products';
   const subcatLabel = S.subcatFilter || '';
+
+  /* clamp page */
+  const totalPages = Math.max(1, Math.ceil(allP.length / S.perPage));
+  if (S.page > totalPages) S.page = totalPages;
+  if (S.page < 1) S.page = 1;
+  const P = allP.slice((S.page - 1) * S.perPage, S.page * S.perPage);
 
   const bc = document.getElementById('catalogBC');
   if (bc) bc.innerHTML = `
@@ -564,58 +612,238 @@ function renderCatalog() {
     ${S.subcatFilter ? `<span class="breadcrumb-sep">›</span><span class="breadcrumb-cur">${subcatLabel}</span>` : ''}
     ${S.query ? `<span class="breadcrumb-sep">›</span><span class="breadcrumb-cur">Search: "${S.query}"</span>` : ''}`;
 
-  const countEl = document.getElementById('catalogCount');
-  if (countEl) countEl.innerHTML = `${P.length} results${S.catFilter ? ` in <strong>${catName}</strong>` : ''}${S.subcatFilter ? ` / <strong>${subcatLabel}</strong>` : ''}${S.query ? ` for <strong>"${S.query}"</strong>` : ''}`;
+  renderToolbarPagination(allP.length, S.page, S.perPage);
 
   const grid = document.getElementById('prodGrid');
   if (!grid) return;
   grid.className = S.view === 'list' ? 'prod-list' : 'prod-grid';
 
-  if (P.length === 0) {
-    grid.innerHTML = `<div class="catalog-empty"><div class="catalog-empty-icon">🔍</div><p class="catalog-empty-title">No results found</p><p class="catalog-empty-sub">Try different keywords or clear filters</p><button class="btn btn-blue" onclick="clearFilters()">Clear All Filters</button></div>`;
-    return;
+  const bottomPg = document.getElementById('catalogPagination');
+
+  if (allP.length === 0) {
+    grid.innerHTML = `<div class="catalog-empty"><div class="catalog-empty-icon">🔍</div><p class="catalog-empty-title">No results found</p><p class="catalog-empty-sub">Try different keywords or adjust your filters</p><button class="btn btn-blue" onclick="clearFilters()">Clear All Filters</button></div>`;
+    if (bottomPg) bottomPg.style.display = 'none';
+  } else {
+    grid.innerHTML = P.map((p, i) => pCard(p, S.view === 'list', i % 5 === 0)).join('');
+    if (bottomPg) bottomPg.style.display = 'none';
   }
-  grid.innerHTML = P.map((p, i) => pCard(p, S.view === 'list', i % 5 === 0)).join('');
+
   renderFilterSidebar();
+  renderActiveFilterTags(allP.length);
 }
 
+function renderActiveFilterTags(count) {
+  const row = document.getElementById('activeFiltersRow');
+  if (!row) return;
+  const tags = [];
+  if (S.catFilter) {
+    const name = STORE_DATA.categories.find(c => c.id === S.catFilter)?.name || S.catFilter;
+    tags.push(`<span class="af-tag">Category: ${name} <button onclick="S.catFilter=null;S.subcatFilter=null;S.expandedCats=[];renderCatalog()">&times;</button></span>`);
+  }
+  if (S.subcatFilter) tags.push(`<span class="af-tag">Type: ${S.subcatFilter} <button onclick="S.subcatFilter=null;renderCatalog()">&times;</button></span>`);
+  S.filters.mfrs.forEach(m => tags.push(`<span class="af-tag">${m} <button onclick="toggleMfr('${m}',false);document.querySelector('.filter-item input[onchange*=\\'${m}\\']').checked=false">&times;</button></span>`));
+  if (S.filters.minRating > 0) tags.push(`<span class="af-tag">${S.filters.minRating}★ & Up <button onclick="setRatingFilter(0)">&times;</button></span>`);
+  S.filters.packages.forEach(pkg => tags.push(`<span class="af-tag">${pkg} <button onclick="togglePackage('${pkg}',false)">&times;</button></span>`));
+  if (S.filters.minP > 0 || S.filters.maxP < 999999) tags.push(`<span class="af-tag">₹${S.filters.minP}–${S.filters.maxP < 999999 ? S.filters.maxP : '∞'} <button onclick="S.filters.minP=0;S.filters.maxP=999999;document.getElementById('priceMin').value='';document.getElementById('priceMax').value='';renderCatalog()">&times;</button></span>`);
+  if (S.filters.inStock) tags.push(`<span class="af-tag">In Stock <button onclick="S.filters.inStock=false;document.getElementById('filterStock').checked=false;renderCatalog()">&times;</button></span>`);
+  if (S.filters.isNew) tags.push(`<span class="af-tag">New Arrivals <button onclick="S.filters.isNew=false;document.getElementById('filterNew').checked=false;renderCatalog()">&times;</button></span>`);
+  if (S.filters.filterQuery) tags.push(`<span class="af-tag">Search: "${S.filters.filterQuery}" <button onclick="S.filters.filterQuery='';document.getElementById('filterSearchInp').value='';renderCatalog()">&times;</button></span>`);
+  row.innerHTML = tags.join('');
+}
+
+/* ── Filter Sidebar ────────────────────────────────────────────── */
 function renderFilterSidebar() {
-  const mfrs = [...new Set(STORE_DATA.products.filter(p => !S.catFilter || p.category === S.catFilter).map(p => p.manufacturer || p.brand || '').filter(Boolean))].sort();
+  renderCatFilters();
+  renderMfrFilters();
+  renderRatingFilters();
+  renderPackageFilters();
+}
+
+function renderCatFilters() {
+  const catEl = document.getElementById('catFilters');
+  if (!catEl) return;
+
+  /* "All" row */
+  let html = `
+    <div class="cat-row cat-all-row ${!S.catFilter ? 'active' : ''}"
+         onclick="S.catFilter=null;S.subcatFilter=null;S.expandedCats=[];renderCatalog()">
+      <span class="cat-row-name">All Categories</span>
+      <span class="filter-count">${STORE_DATA.products.length}</span>
+    </div>`;
+
+  STORE_DATA.categories.forEach(c => {
+    const catProducts = STORE_DATA.products.filter(p => p.category === c.id);
+    const catCount = catProducts.length;
+    const isSelected = S.catFilter === c.id;
+    const isExpanded = S.expandedCats.includes(c.id);
+
+    /* build subcategory counts */
+    const subcatMap = {};
+    catProducts.forEach(p => {
+      const sub = getProductSubcategory(p);
+      if (sub) subcatMap[sub] = (subcatMap[sub] || 0) + 1;
+    });
+    const subcats = Object.entries(subcatMap).sort((a, b) => b[1] - a[1]);
+    const hasSubcats = subcats.length > 0;
+
+    html += `
+      <div class="cat-accordion ${isExpanded ? 'expanded' : ''}" data-cat-id="${c.id}">
+        <div class="cat-row ${isSelected && !S.subcatFilter ? 'active' : ''}"
+             onclick="selectCategory('${c.id}')">
+          <span class="cat-row-name">${c.name}</span>
+          <span class="filter-count">${catCount}</span>
+          ${hasSubcats ? `<span class="acc-toggle" onclick="event.stopPropagation();toggleCatAccordion('${c.id}')">
+            <svg class="acc-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>` : ''}
+        </div>
+        ${hasSubcats ? `<div class="cat-subcats">
+          ${subcats.map(([sub, cnt]) => `
+            <div class="subcat-row ${isSelected && (S.subcatFilter || '').toLowerCase() === sub.toLowerCase() ? 'active' : ''}"
+                 onclick="selectSubcat('${c.id}','${sub.replace(/'/g, "\\'")}')">
+              <span>${sub}</span>
+              <span class="filter-count">${cnt}</span>
+            </div>`).join('')}
+        </div>` : ''}
+      </div>`;
+  });
+
+  catEl.innerHTML = html;
+}
+
+function selectCategory(catId) {
+  S.catFilter = catId; S.subcatFilter = null; S.page = 1;
+  if (!S.expandedCats.includes(catId)) S.expandedCats.push(catId);
+  renderCatalog();
+}
+
+function selectSubcat(catId, subcat) {
+  S.catFilter = catId; S.subcatFilter = subcat; S.page = 1;
+  renderCatalog();
+}
+
+function toggleCatAccordion(catId) {
+  const idx = S.expandedCats.indexOf(catId);
+  if (idx > -1) S.expandedCats.splice(idx, 1);
+  else S.expandedCats.push(catId);
+  const acc = document.querySelector(`.cat-accordion[data-cat-id="${catId}"]`);
+  if (acc) acc.classList.toggle('expanded', S.expandedCats.includes(catId));
+}
+
+function renderMfrFilters() {
+  const mfrs = [...new Set(
+    STORE_DATA.products
+      .filter(p => !S.catFilter || p.category === S.catFilter)
+      .map(p => p.manufacturer || p.brand || '')
+      .filter(Boolean)
+  )].sort();
   const mfrEl = document.getElementById('mfrFilters');
-  if (mfrEl) {
-    mfrEl.innerHTML = mfrs.map(m => {
-      const cnt = STORE_DATA.products.filter(p => (p.manufacturer || p.brand) === m && (!S.catFilter || p.category === S.catFilter)).length;
-      return `<label class="filter-item">
-        <input type="checkbox" class="filter-check" ${S.filters.mfrs.includes(m) ? 'checked' : ''} onchange="toggleMfr('${m}',this.checked)">
-        <span>${m}</span>
+  if (!mfrEl) return;
+  mfrEl.innerHTML = mfrs.map(m => {
+    const cnt = STORE_DATA.products.filter(p =>
+      (p.manufacturer || p.brand) === m && (!S.catFilter || p.category === S.catFilter)
+    ).length;
+    return `<label class="filter-item">
+      <input type="checkbox" class="filter-check" ${S.filters.mfrs.includes(m) ? 'checked' : ''}
+             onchange="toggleMfr('${m}',this.checked)">
+      <span>${m}</span>
+      <span class="filter-count">${cnt}</span>
+    </label>`;
+  }).join('');
+}
+
+function renderRatingFilters() {
+  const ratingEl = document.getElementById('ratingFilters');
+  if (!ratingEl) return;
+  const ratingOpts = [4, 3, 2];
+  ratingEl.innerHTML = `
+    <label class="filter-item">
+      <input type="radio" class="filter-check" name="ratingFilter" ${S.filters.minRating === 0 ? 'checked' : ''}
+             onchange="setRatingFilter(0)">
+      <span>Any Rating</span>
+    </label>` +
+    ratingOpts.map(r => {
+      const cnt = STORE_DATA.products.filter(p =>
+        (p.rating || 0) >= r && (!S.catFilter || p.category === S.catFilter)
+      ).length;
+      return `<label class="filter-item rating-filter-item">
+        <input type="radio" class="filter-check" name="ratingFilter" ${S.filters.minRating === r ? 'checked' : ''}
+               onchange="setRatingFilter(${r})">
+        <span class="rf-label"><span class="rf-stars">${'★'.repeat(r)}${'☆'.repeat(5-r)}</span><span class="rf-up"> &amp; Up</span></span>
         <span class="filter-count">${cnt}</span>
       </label>`;
     }).join('');
-  }
+}
 
-  const catEl = document.getElementById('catFilters');
-  if (catEl) {
-    catEl.innerHTML = STORE_DATA.categories.map(c => `
-      <label class="filter-item">
-        <input type="radio" class="filter-check" name="catFilter" ${S.catFilter === c.id ? 'checked' : ''} onchange="S.catFilter='${c.id}';S.subcatFilter=null;renderCatalog()">
-        <span>${c.name}</span>
-        <span class="filter-count">${c.count || ''}</span>
-      </label>`).join('');
-  }
+function setRatingFilter(r) {
+  S.filters.minRating = r;
+  renderCatalog();
+}
+
+function renderPackageFilters() {
+  const pkgEl = document.getElementById('pkgFilters');
+  if (!pkgEl) return;
+  const products = S.catFilter
+    ? STORE_DATA.products.filter(p => p.category === S.catFilter)
+    : STORE_DATA.products;
+  const pkgMap = {};
+  products.forEach(p => { if (p.package) pkgMap[p.package] = (pkgMap[p.package] || 0) + 1; });
+  const pkgs = Object.entries(pkgMap).sort((a, b) => b[1] - a[1]);
+  if (!pkgs.length) { pkgEl.innerHTML = '<p class="filter-empty-note">No package data</p>'; return; }
+  pkgEl.innerHTML = pkgs.map(([pkg, cnt]) => `
+    <label class="filter-item">
+      <input type="checkbox" class="filter-check" ${S.filters.packages.includes(pkg) ? 'checked' : ''}
+             onchange="togglePackage('${pkg.replace(/'/g, "\\'")}',this.checked)">
+      <span>${pkg}</span>
+      <span class="filter-count">${cnt}</span>
+    </label>`).join('');
+}
+
+function togglePackage(pkg, checked) {
+  if (checked) S.filters.packages.push(pkg);
+  else S.filters.packages = S.filters.packages.filter(x => x !== pkg);
+  renderCatalog();
+}
+
+/* collapse/expand a whole filter group */
+function toggleFilterGroup(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isCollapsed = el.classList.toggle('fg-collapsed');
+  const chevron = el.querySelector('.fg-chevron');
+  if (chevron) chevron.style.transform = isCollapsed ? 'rotate(-90deg)' : '';
+}
+
+function onFilterSearch(q) {
+  S.filters.filterQuery = q.trim(); S.page = 1;
+  renderCatalog();
+}
+
+function applyPriceFilter() {
+  S.filters.minP = parseFloat(document.getElementById('priceMin')?.value) || 0;
+  S.filters.maxP = parseFloat(document.getElementById('priceMax')?.value) || 999999;
+  renderCatalog();
 }
 
 function toggleMfr(m, checked) {
-  if (checked) S.filters.mfrs.push(m);
+  if (checked) { if (!S.filters.mfrs.includes(m)) S.filters.mfrs.push(m); }
   else S.filters.mfrs = S.filters.mfrs.filter(x => x !== m);
   renderCatalog();
 }
+
 function clearFilters() {
-  S.catFilter = null;
+  S.catFilter    = null;
   S.subcatFilter = null;
-  S.mfrFilter = null;
-  S.query     = '';
-  S.filters   = { mfrs: [], minP: 0, maxP: 999999, inStock: false, isNew: false };
-  S.sort      = 'featured';
+  S.mfrFilter    = null;
+  S.query        = '';
+  S.expandedCats = [];
+  S.filters      = { mfrs: [], minP: 0, maxP: 999999, inStock: false, isNew: false, minRating: 0, packages: [], filterQuery: '' };
+  S.sort         = 'featured'; S.page = 1;
+  const si = document.getElementById('filterSearchInp'); if (si) si.value = '';
+  const pm = document.getElementById('priceMin');        if (pm) pm.value = '';
+  const px = document.getElementById('priceMax');        if (px) px.value = '';
+  const fs = document.getElementById('filterStock');     if (fs) fs.checked = false;
+  const fn = document.getElementById('filterNew');       if (fn) fn.checked = false;
+  const ss = document.getElementById('sortSel');         if (ss) ss.value = 'featured';
   renderCatalog();
 }
 
@@ -871,8 +1099,6 @@ document.addEventListener('DOMContentLoaded', () => {
           renderCatalog();
         });
       });
-      document.getElementById('priceMin')?.addEventListener('input',  e => { S.filters.minP = +e.target.value || 0;      renderCatalog(); });
-      document.getElementById('priceMax')?.addEventListener('input',  e => { S.filters.maxP = +e.target.value || 999999; renderCatalog(); });
       document.getElementById('filterStock')?.addEventListener('change', e => { S.filters.inStock = e.target.checked; renderCatalog(); });
       document.getElementById('filterNew')?.addEventListener('change',   e => { S.filters.isNew   = e.target.checked; renderCatalog(); });
       break;
