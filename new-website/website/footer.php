@@ -26,15 +26,19 @@
         <div class="footer-contact-list">
           <div class="footer-ci">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/></svg>
-            +91-9876543210
+            <span><strong>Phone:</strong> +49 (0)8165-9906178</span>
           </div>
           <div class="footer-ci">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-            info@sinelec-tech.com
+            <span><strong>Email:</strong> contact@sinelec-tech.com</span>
           </div>
           <div class="footer-ci">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Electronics Market, Delhi 110001
+            <span><strong>Address:</strong> Brachvogelweg 9, 85375 Neufahrn, Germany</span>
+          </div>
+          <div class="footer-ci">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M6 9V2h12v20H6v-7"/><polyline points="6 15 2 15 2 9 6 9"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="10" x2="14" y2="10"/></svg>
+            <span><strong>Fax:</strong> +49 (0)8165-9039998</span>
           </div>
         </div>
         <div class="footer-socials">
@@ -46,76 +50,57 @@
         </div>
       </div>
 
-      <!-- Products -->
-      <div>
-        <div class="footer-col-title">Products</div>
-        <ul class="footer-links">
-          <li><a href="products?cat=mcu" class="footer-link">Microcontrollers</a></li>
-          <li><a href="products?cat=logic" class="footer-link">Logic ICs</a></li>
-          <li><a href="products?cat=opamp" class="footer-link">Op-Amps</a></li>
-          <li><a href="products?cat=power" class="footer-link">Power Management</a></li>
-          <li><a href="products?cat=transistor" class="footer-link">Transistors &amp; MOSFET</a></li>
-          <li><a href="products?cat=sensor" class="footer-link">Sensors</a></li>
-          <li><a href="products?cat=display" class="footer-link">Display &amp; LED</a></li>
-        </ul>
-      </div>
-
-      <!-- Services -->
-      <div>
-        <div class="footer-col-title">Services</div>
-        <ul class="footer-links">
-          <li><a href="chip-programming" class="footer-link">Chip Programming</a></li>
-          <li><a href="chip-programming" class="footer-link">PCB Design &amp; Assembly</a></li>
-          <li><a href="chip-programming" class="footer-link">Embedded Development</a></li>
-          <li><a href="chip-programming" class="footer-link">Component Testing</a></li>
-          <li><a href="request-a-quote" class="footer-link">Bulk Orders</a></li>
-          <li><a href="request-a-quote" class="footer-link">Custom Quote</a></li>
-        </ul>
-      </div>
-
-      <!-- Support -->
-      <div>
-        <div class="footer-col-title">Support</div>
-        <ul class="footer-links">
-          <li><a href="#" class="footer-link">Track Your Order</a></li>
-          <li><a href="#" class="footer-link">Returns &amp; Refunds</a></li>
-          <li><a href="#" class="footer-link">Shipping Policy</a></li>
-          <li><a href="resources" class="footer-link">FAQs</a></li>
-          <li><a href="about#contact" class="footer-link">Contact Us</a></li>
-          <li><a href="resources" class="footer-link">Datasheet Library</a></li>
-        </ul>
-      </div>
-
       <!-- Company -->
       <div>
         <div class="footer-col-title">Company</div>
         <ul class="footer-links">
+          <li><a href="#" class="footer-link">Environmental Policy</a></li>
           <li><a href="about" class="footer-link">About Us</a></li>
+          <li><a href="#" class="footer-link">Latest News</a></li>
           <li><a href="#" class="footer-link">Careers</a></li>
-          <li><a href="resources" class="footer-link">Blog &amp; Tutorials</a></li>
-          <li><a href="#" class="footer-link">Press</a></li>
-          <li><a href="#" class="footer-link">Sitemap</a></li>
+          <li><a href="#" class="footer-link">Disclaimers</a></li>
+          <li><a href="#" class="footer-link">Privacy Policy</a></li>
+          <li><a href="#" class="footer-link">Terms of Use</a></li>
+        </ul>
+      </div>
+
+      <!-- Customer Support -->
+      <div>
+        <div class="footer-col-title">Customer Support</div>
+        <ul class="footer-links">
+          <li><a href="about#contact" class="footer-link">Contact us</a></li>
+          <li><a href="request-a-quote" class="footer-link">Request Quote</a></li>
+          <li><a href="#" class="footer-link">Shipping &amp; Payment</a></li>
+          <li><a href="#" class="footer-link">Returns Policy</a></li>
+          <li><a href="resources" class="footer-link">FAQ</a></li>
+        </ul>
+      </div>
+
+      <!-- Our Services -->
+      <div>
+        <div class="footer-col-title">Our Services</div>
+        <ul class="footer-links">
+          <li><a href="chip-programming" class="footer-link">Engineering Services</a></li>
+          <li><a href="chip-programming" class="footer-link">Manufacturing Services</a></li>
+          <li><a href="manufacturers" class="footer-link">Distribution Services</a></li>
+          <li><a href="about#contact" class="footer-link">After-Sale Services</a></li>
+        </ul>
+      </div>
+
+      <!-- Manufacturing -->
+      <div>
+        <div class="footer-col-title">Manufacturing</div>
+        <ul class="footer-links">
+          <li><a href="chip-programming" class="footer-link">Electronic Manufacturing</a></li>
+          <li><a href="chip-programming" class="footer-link">Testing and Programming</a></li>
+          <li><a href="chip-programming" class="footer-link">Quality Control</a></li>
         </ul>
       </div>
 
     </div>
 
     <div class="footer-bottom">
-      <span>© 2026 Sinelec Tech Pvt. Ltd. All rights reserved.</span>
-      <div class="payment-methods">
-        <span class="pm-chip">UPI</span>
-        <span class="pm-chip">VISA</span>
-        <span class="pm-chip">MASTERCARD</span>
-        <span class="pm-chip">RUPAY</span>
-        <span class="pm-chip">NET BANKING</span>
-        <span class="pm-chip">COD</span>
-        <span class="pm-chip">EMI</span>
-      </div>
-      <div class="footer-bottom-links">
-        <a href="#" class="footer-bottom-link">Privacy Policy</a>
-        <a href="#" class="footer-bottom-link">Terms of Use</a>
-        <a href="#" class="footer-bottom-link">Cookie Policy</a>
-      </div>
+      <span>Copyright &copy; <?= date('Y') ?> Sinelec Technologies. | Disclaimers | Privacy Policy | Terms of Use | All Prices excl. VAT and Shipping</span>
     </div>
   </div>
 </footer>
@@ -141,7 +126,7 @@
     <div class="cart-subtotal-row"><span>Shipping</span><span id="cartShip">₹99.00</span></div>
     <div class="cart-subtotal-row"><span>GST (18%)</span><span id="cartGST">₹0.00</span></div>
     <div class="cart-subtotal-row total-row"><span>Order Total</span><span id="cartTotal">₹0.00</span></div>
-    <button class="cart-checkout-btn" onclick="toast('Checkout coming soon! Call +91-9876543210 to place order.','warn')">
+    <button class="cart-checkout-btn" onclick="toast('Checkout coming soon! Call +49 (0)8165-9906178 to place order.','warn')">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Proceed to Checkout
     </button>

@@ -7,6 +7,9 @@ const STORE_DATA    = window.STORE_DATA    || { categories:[], manufacturers:[],
 const CURRENT_PAGE  = window.CURRENT_PAGE  || 'home';
 const CATALOG_INIT  = window.CATALOG_INIT  || { cat:'', mfr:'', q:'', subcat:'', isNew:false };
 const CURRENT_PRODUCT = window.CURRENT_PRODUCT || null;
+const EUR_RATE = 0.0093;
+const EUR_FORMAT = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' });
+const CATEGORY_NAME_MAP = Object.fromEntries((STORE_DATA.categories || []).map(c => [c.id, c.name]));
 
 /* ── Page routing map ────────────────────────────────────────── */
 const PAGE_MAP = {
@@ -281,10 +284,25 @@ function addRecentlyViewed(id) {
 /* ── Product card renderer ───────────────────────────────────── */
 function pCard(p, listView = false, sponsored = false) {
   const price = p.priceBreaks ? p.priceBreaks[0].price : (p.price || 0);
-  const d     = disc(price, p.originalPrice);
   const si    = p.stock > 100 ? 'in-stock' : p.stock > 0 ? 'low-stock' : 'out-stock';
   const siLbl = p.stock > 100 ? 'In Stock' : p.stock > 0 ? `Only ${p.stock} left` : 'Unavailable';
   const wished = S.wishIds.includes(p.id);
+  const categoryName = CATEGORY_NAME_MAP[p.category] || p.category || 'Components';
+  const primaryBadge = p.isNew ? 'new' : (p.badge || '');
+  const badgeTextMap = {
+    new: 'New',
+    popular: 'Popular',
+    bestseller: 'Best Seller',
+    featured: 'Featured',
+    hot: 'Hot',
+    sale: 'Sale',
+  };
+  const badgeText = primaryBadge ? (badgeTextMap[primaryBadge] || String(primaryBadge)) : '';
+  const eurPrice = EUR_FORMAT.format(price * EUR_RATE);
+  const eurOrig = p.originalPrice ? EUR_FORMAT.format(p.originalPrice * EUR_RATE) : '';
+  const eurLowBreak = p.priceBreaks?.length > 1
+    ? EUR_FORMAT.format(p.priceBreaks[p.priceBreaks.length - 1].price * EUR_RATE)
+    : '';
 
   return `
   <div class="pcard${listView ? ' list-v' : ''}" data-id="${p.id}">
@@ -292,11 +310,8 @@ function pCard(p, listView = false, sponsored = false) {
       <img class="pcard-img" src="${p.image}" alt="${p.name}" loading="lazy"
            onerror="this.src='https://placehold.co/300x300/EBF3FF/0066CC?text=${encodeURIComponent(p.sku)}'">
       <div class="pcard-badges">
-        ${p.badge  ? `<span class="pbadge pbadge-${p.badge}">${p.badge}</span>` : ''}
-        ${p.isNew  ? `<span class="pbadge pbadge-new">New</span>` : ''}
+        ${primaryBadge ? `<span class="pbadge pbadge-${primaryBadge}">${badgeText}</span>` : ''}
       </div>
-      ${d ? `<div class="pcard-discount">−${d}%</div>` : ''}
-      <div class="pcard-express">EXPRESS</div>
       <button class="pcard-wish ${wished ? 'wished' : ''}" data-id="${p.id}"
               onclick="event.stopPropagation();toggleWish(${p.id})"
               title="${wished ? 'Remove from wishlist' : 'Add to wishlist'}">
@@ -304,22 +319,20 @@ function pCard(p, listView = false, sponsored = false) {
       </button>
     </div>
     <div class="pcard-body" onclick="openPDP(${p.id})" style="cursor:pointer">
-      ${sponsored ? '<span class="sponsored-tag">Sponsored</span>' : ''}
-      <div class="pcard-sku">${p.sku}</div>
-      <div class="pcard-mfr">${p.manufacturer || p.brand || ''}</div>
       <h3 class="pcard-name">${p.name}</h3>
+      <div class="pcard-cat-rating">
+        <div class="pcard-cat">${categoryName}</div>
+        <div class="pcard-rating">
+          ${stars(p.rating)}
+          <span class="pcard-rc">${(p.reviewCount || p.reviews || 0).toLocaleString()}</span>
+        </div>
+      </div>
       ${listView && p.package ? `<div class="pcard-specs"><span class="spec-tag">${p.package}</span></div>` : ''}
-      <div class="pcard-rating">
-        ${stars(p.rating)}
-        <span class="pcard-rc">${(p.reviewCount || p.reviews || 0).toLocaleString()}</span>
-      </div>
       <div class="pcard-price-row">
-        <span class="price-sym">₹</span>
-        <span class="price-main">${price.toFixed(2)}</span>
-        ${p.originalPrice ? `<span class="price-orig">₹${p.originalPrice.toFixed(2)}</span>` : ''}
-        ${d ? `<span class="price-save">(${d}% off)</span>` : ''}
+        <span class="price-main">${eurPrice}</span>
+        ${p.originalPrice ? `<span class="price-orig">${eurOrig}</span>` : ''}
       </div>
-      ${p.priceBreaks?.length > 1 ? `<div class="pcard-price-break">As low as <strong>₹${p.priceBreaks[p.priceBreaks.length - 1].price.toFixed(2)}</strong> for ${p.priceBreaks[p.priceBreaks.length - 1].qty}+ units</div>` : ''}
+      ${p.priceBreaks?.length > 1 ? `<div class="pcard-price-break">As low as <strong>${eurLowBreak}</strong> for ${p.priceBreaks[p.priceBreaks.length - 1].qty}+ units</div>` : ''}
       <div class="pcard-stock ${si}">${siLbl}</div>
       <div class="pcard-delivery">${ic('truck', 11, 11)} FREE delivery by <strong>${delivEst()}</strong></div>
     </div>
@@ -629,19 +642,14 @@ function renderFlashDeals() {
   if (!el) return;
   const deals = STORE_DATA.products.filter(p => p.originalPrice).slice(0, 5);
   el.innerHTML = deals.map(p => {
-    const d = disc(p.priceBreaks ? p.priceBreaks[0].price : p.price, p.originalPrice);
-    const claimed = Math.floor(Math.random() * 80) + 10;
     return `
     <div class="fdeal-card" onclick="openPDP(${p.id})">
       <div class="fdeal-img">
         <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/200/EBF3FF/0066CC?text=${encodeURIComponent(p.sku)}'">
-        <div class="fdeal-pct">−${d}%</div>
       </div>
       <div class="fdeal-body">
         <div class="fdeal-name">${p.name}</div>
         <div class="fdeal-price">₹${(p.priceBreaks ? p.priceBreaks[0].price : p.price).toFixed(2)}<small>₹${p.originalPrice.toFixed(2)}</small></div>
-        <div class="fdeal-bar"><div class="fdeal-bar-fill" style="width:${claimed}%"></div></div>
-        <div class="fdeal-claimed">${claimed}% claimed</div>
       </div>
     </div>`;
   }).join('');
@@ -653,7 +661,6 @@ function renderTopDeals() {
   const deals = STORE_DATA.products.filter(p => p.originalPrice).slice(0, 4);
   el.innerHTML = deals.map(p => {
     const price = p.priceBreaks ? p.priceBreaks[0].price : p.price;
-    const d = disc(price, p.originalPrice);
     return `
     <div class="deal-card" onclick="openPDP(${p.id})">
       <div class="deal-card-img"><img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/200/EBF3FF/0066CC?text=${encodeURIComponent(p.sku)}'"></div>
@@ -663,7 +670,6 @@ function renderTopDeals() {
         <div class="deal-card-price">
           <span class="deal-price-main">₹${price.toFixed(2)}</span>
           <span class="deal-price-orig">₹${p.originalPrice.toFixed(2)}</span>
-          <span class="deal-price-save">${d}% off</span>
         </div>
         <button class="btn-atc" onclick="event.stopPropagation();atcClick(event,${p.id})">${ic('cart', 13, 13)} Add to Cart</button>
       </div>
@@ -817,11 +823,6 @@ document.addEventListener('DOMContentLoaded', () => {
           .slice()
           .sort((a, b) => discountPct(b) - discountPct(a))
           .slice(0, 14);
-        const topDealProducts = discountedProducts
-          .slice()
-          .sort((a, b) => (Number(b.reviews || 0) + Number(b.rating || 0) * 100) - (Number(a.reviews || 0) + Number(a.rating || 0) * 100))
-          .slice(0, 14);
-
         const featuredProducts = STORE_DATA.products
           .filter(p => p.badge === 'featured' || p.badge === 'popular' || Number(p.rating || 0) >= 4.7)
           .slice(0, 14);
@@ -834,7 +835,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         renderFeaturedCarousel('flashDealsTrack', flashDealProducts.length ? flashDealProducts : STORE_DATA.products.slice(0, 14));
         renderFeaturedCarousel('featuredTrack', featuredProducts.length ? featuredProducts : STORE_DATA.products.slice(0, 14));
-        renderFeaturedCarousel('topDealsTrack', topDealProducts.length ? topDealProducts : STORE_DATA.products.slice(0, 14));
         renderFeaturedCarousel('bestsellerTrack', bestSellerProducts.length ? bestSellerProducts : STORE_DATA.products.slice(0, 14));
         renderFeaturedCarousel('newArrivalsTrack', newArrivalProducts.length ? newArrivalProducts : STORE_DATA.products.slice(0, 14));
       }

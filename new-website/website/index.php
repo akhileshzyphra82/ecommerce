@@ -202,7 +202,7 @@ require_once 'header.php';
     <div class="sec-head">
       <div>
         <div class="sec-title">Flash Sales</div>
-        <div class="sec-subtitle">Limited stock at special prices</div>
+        <div class="sec-subtitle">Limited-time offers with the highest savings.</div>
       </div>
       <div class="carousel-nav-btns">
         <button class="car-btn car-btn-inline" onclick="carouselScroll('flashDealsTrack', 1)">
@@ -220,66 +220,12 @@ require_once 'header.php';
     </div>
   </div>
 
-  <!-- Popular -->
-  <div class="home-section-wrap" id="popular-section">
-    <div class="sec-head">
-      <div>
-        <div class="sec-title">Popular</div>
-        <div class="sec-subtitle">Popular picks from top categories</div>
-      </div>
-      <div class="carousel-nav-btns">
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('featuredTrack', 1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('featuredTrack', -1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="prod-carousel">
-      <div class="prod-carousel-track-wrap">
-        <div class="prod-carousel-track" id="featuredTrack"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Top Deals -->
-  <div class="home-section-wrap">
-    <div class="sec-head">
-      <div>
-        <div class="sec-title">Top Deals This Week</div>
-        <div class="sec-subtitle">Best-value picks trending this week</div>
-      </div>
-      <div class="carousel-nav-btns">
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('topDealsTrack', 1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('topDealsTrack', -1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="prod-carousel">
-      <div class="prod-carousel-track-wrap">
-        <div class="prod-carousel-track" id="topDealsTrack"></div>
-      </div>
-    </div>
-  </div>
-
   <!-- Best Seller -->
   <div class="home-section-wrap" id="best-seller-section">
-    <div class="brand-banner brand-banner--ti">
-      <div class="brand-logo-placeholder brand-logo--ti">TI</div>
-      <div class="brand-tagline">
-        <strong>Texas Instruments</strong>
-        TI Authorized Distributor
-      </div>
-      <a href="products?mfr=TI" class="btn btn-outline btn-sm">Shop TI →</a>
-    </div>
     <div class="sec-head">
       <div>
         <div class="sec-title">Best Seller</div>
-        <div class="sec-subtitle">Genuine STM32, STM8, SPC series — from ₹285 per unit. Volume discounts available.</div>
+        <div class="sec-subtitle">Most purchased components trusted by repeat buyers.</div>
       </div>
       <div class="carousel-nav-btns">
         <button class="car-btn car-btn-inline" onclick="carouselScroll('bestsellerTrack', 1)">
@@ -297,12 +243,35 @@ require_once 'header.php';
     </div>
   </div>
 
+  <!-- Popular -->
+  <div class="home-section-wrap" id="popular-section">
+    <div class="sec-head">
+      <div>
+        <div class="sec-title">Popular</div>
+        <div class="sec-subtitle">Top-rated and frequently viewed products.</div>
+      </div>
+      <div class="carousel-nav-btns">
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('featuredTrack', 1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('featuredTrack', -1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="prod-carousel">
+      <div class="prod-carousel-track-wrap">
+        <div class="prod-carousel-track" id="featuredTrack"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- New arrival -->
   <div class="home-section-wrap" id="new-arrival-section">
     <div class="sec-head">
       <div>
         <div class="sec-title">New arrival</div>
-        <div class="sec-subtitle">Just landed this week</div>
+        <div class="sec-subtitle">Recently added products, now available in stock.</div>
       </div>
       <div class="carousel-nav-btns">
         <button class="car-btn car-btn-inline" onclick="carouselScroll('newArrivalsTrack', 1)">
@@ -338,10 +307,14 @@ require_once 'header.php';
         <div class="trust-badge-title">Easy Returns</div>
         <div class="trust-badge-sub">7-day return policy</div>
       </div>
-      <div>
-        <div class="trust-badge-icon">🔒</div>
-        <div class="trust-badge-title">Secure Payment</div>
-        <div class="trust-badge-sub">UPI · Cards · COD · EMI</div>
+      <div class="trust-badge-payments">
+        <img
+          src="../assets/payment-methods.svg"
+          alt="Accepted payments: PayPal, Bank Transfer, Visa, Mastercard, American Express"
+          class="trust-badge-payment-img"
+        >
+        <div class="trust-badge-title">Accepted Payments</div>
+        <div class="trust-badge-sub">PayPal · Bank Transfer · Visa · Mastercard · American Express</div>
       </div>
       <div>
         <div class="trust-badge-icon">📞</div>
