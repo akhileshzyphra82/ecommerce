@@ -7,8 +7,8 @@ abstract class PersistentManager {
 
 	private function connectDB() {
 			$DB = NewADOConnection('mysqli');
-			$DB->Connect('162.241.224.212', 'sinelect_db', 'password@12345', 'sinelect_panel_productdb');
-			// $DB->Connect('localhost', 'sinelect_db', '0W@IdwHzWxE&', 'sinelect_panel_productdb');
+			//$DB->Connect('162.241.224.212', 'sinelect_db', 'password@12345', 'sinelect_panel_productdb');
+			$DB->Connect('localhost', 'sinelect_db', '0W@IdwHzWxE&', 'sinelect_panel_productdb');
 			
 			return $DB;
 	}
