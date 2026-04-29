@@ -423,23 +423,6 @@ function startHero() {
   goSlide(0); resetT();
 }
 
-/* ── Deal Timer ──────────────────────────────────────────────── */
-function startTimer() {
-  function update() {
-    const end  = new Date(); end.setHours(23, 59, 59, 999);
-    const diff = end - new Date();
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    const pad = n => String(n).padStart(2, '0');
-    const setEl = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-    setEl('timerH', pad(h));
-    setEl('timerM', pad(m));
-    setEl('timerS', pad(s));
-  }
-  update(); setInterval(update, 1000);
-}
-
 /* ── Carousel scroll ─────────────────────────────────────────── */
 function carouselScroll(id, dir) {
   const track = document.getElementById(id);
@@ -919,6 +902,51 @@ function renderServices() {
     </div>`).join('');
 }
 
+function initAboutTeamCarousel() {
+  const track = document.getElementById('aboutTeamTrack');
+  const prev = document.getElementById('aboutTeamPrev');
+  const next = document.getElementById('aboutTeamNext');
+  if (!track || !prev || !next) return;
+
+  const slides = Array.from(track.children);
+  if (!slides.length) return;
+
+  let index = 0;
+
+  const getVisible = () => {
+    if (window.innerWidth <= 760) return 1;
+    if (window.innerWidth <= 1100) return 2;
+    return 3;
+  };
+
+  const update = () => {
+    const visible = getVisible();
+    const maxIndex = Math.max(0, slides.length - visible);
+    index = Math.min(index, maxIndex);
+
+    const slideWidth = slides[0].getBoundingClientRect().width;
+    const gap = parseFloat(getComputedStyle(track).gap || '0') || 0;
+    track.style.transform = `translateX(-${index * (slideWidth + gap)}px)`;
+
+    prev.disabled = index === 0;
+    next.disabled = index >= maxIndex;
+  };
+
+  prev.addEventListener('click', () => {
+    index = Math.max(0, index - 1);
+    update();
+  });
+
+  next.addEventListener('click', () => {
+    const maxIndex = Math.max(0, slides.length - getVisible());
+    index = Math.min(maxIndex, index + 1);
+    update();
+  });
+
+  window.addEventListener('resize', update);
+  update();
+}
+
 /* ── Mobile menu ─────────────────────────────────────────────── */
 function openMobMenu()  { document.getElementById('mobMenu').classList.add('on'); document.body.style.overflow = 'hidden'; }
 function closeMobMenu() { document.getElementById('mobMenu').classList.remove('on'); document.body.style.overflow = ''; }
@@ -1039,7 +1067,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     case 'home':
       startHero();
-      startTimer();
 
       {
         const basePrice = p => (p.priceBreaks?.[0]?.price || p.price || 0);
@@ -1126,6 +1153,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     case 'about':
     case 'contact':
+      initAboutTeamCarousel();
       document.getElementById('contactForm')?.addEventListener('submit', e => {
         e.preventDefault();
         toast("Message sent! We'll reply within 24h.", 'ok');

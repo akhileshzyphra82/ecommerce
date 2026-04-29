@@ -293,17 +293,11 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
           <span class="nav-badge">New</span>
         </a>
 
-        <!-- New Arrivals -->
-        <a href="new-arrivals" class="<?= navClass('new-arrivals', $currentPage) ?>">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          New
-        </a>
-
         <!-- Request a Quote -->
         <a href="request-a-quote" class="<?= navClass('request-a-quote', $currentPage) ?>">Request a Quote</a>
 
-        <!-- About Us -->
-        <a href="about" class="<?= navClass('about', $currentPage) ?>">About Us</a>
+        <!-- About Sinelec -->
+        <a href="about" class="<?= navClass('about', $currentPage) ?>">About Sinelec</a>
 
       </div>
     </div>
@@ -351,17 +345,13 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 7l5 5-5 5M7 7l-5 5 5 5M14 3l-4 18"/></svg>
         Chip Programming Service
       </a>
-      <a href="new-arrivals" class="mob-link <?= $currentPage === 'new-arrivals' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        New Arrivals
-      </a>
       <a href="manufacturers" class="mob-link <?= $currentPage === 'manufacturers' ? 'on' : '' ?>">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
         Manufacturers
       </a>
       <a href="about" class="mob-link <?= $currentPage === 'about' ? 'on' : '' ?>">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/></svg>
-        About Us
+        About Sinelec
       </a>
       <a href="about#contact" class="mob-link <?= $currentPage === 'contact' ? 'on' : '' ?>">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/></svg>
