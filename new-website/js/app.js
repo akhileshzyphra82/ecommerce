@@ -21,6 +21,7 @@ const PAGE_MAP = {
   'chip-programming': 'chip-programming',
   'new-arrivals':  'new-arrivals',
   'request-a-quote': 'request-a-quote',
+  checkout:        'checkout',
   about:           'about',
   contact:         'about#contact',
   quote:           'request-a-quote',
@@ -192,6 +193,7 @@ function updateCartUI() {
   const cnt = cartCount();
   document.querySelectorAll('.cart-count').forEach(el => {
     el.textContent = cnt;
+    el.classList.toggle('cart-count-initial', cnt <= 0);
     el.style.display = cnt > 0 ? '' : 'none';
   });
   const wrap = document.getElementById('cartItemsWrap');
@@ -239,6 +241,206 @@ function closeCart() {
   document.getElementById('cartPanel').classList.remove('on');
   document.getElementById('cartOverlay').classList.remove('on');
   document.body.style.overflow = '';
+}
+
+function initCheckoutPage() {
+  const page = document.getElementById('checkoutPage');
+  if (!page) return;
+
+  const addressGrid = document.getElementById('checkoutAddressGrid');
+  const addressFormWrap = document.getElementById('checkoutAddressFormWrap');
+  const toggleAddressBtn = document.getElementById('checkoutToggleAddressBtn');
+  const addressCancelBtn = document.getElementById('checkoutAddressCancelBtn');
+  const addressForm = document.getElementById('checkoutAddressForm');
+  const emptyState = document.getElementById('checkoutEmptyState');
+  const summaryContent = document.getElementById('checkoutSummaryContent');
+  const summaryItems = document.getElementById('checkoutSummaryItems');
+  const selectedAddressText = document.getElementById('checkoutSelectedAddressText');
+  const shippingText = document.getElementById('checkoutShippingText');
+  const paymentText = document.getElementById('checkoutPaymentText');
+  const subtotalEl = document.getElementById('checkoutSubtotal');
+  const shippingCostEl = document.getElementById('checkoutShippingCost');
+  const taxEl = document.getElementById('checkoutTax');
+  const totalEl = document.getElementById('checkoutTotal');
+  const placeBtn = document.getElementById('checkoutPlaceBtn');
+  const invoiceEmail = document.getElementById('checkoutInvoiceEmail');
+
+  const ADDRESS_KEY = 'sinelec_checkout_addresses';
+  const SELECTED_KEY = 'sinelec_checkout_selected_address';
+  const savedDelivery = localStorage.getItem(DELIVERY_KEY) || 'Delhi 110001';
+  const defaultAddresses = [
+    { id: 'office', label: 'Office', name: 'Purchase Desk', phone: '+91 98765 43210', line: `${savedDelivery}, India`, badge: 'Default' },
+    { id: 'warehouse', label: 'Warehouse', name: 'Stores Team', phone: '+91 91234 56789', line: 'Noida Sector 62, Uttar Pradesh 201309, India', badge: 'Business' },
+  ];
+
+  let addresses = [];
+  try {
+    addresses = JSON.parse(localStorage.getItem(ADDRESS_KEY) || '[]');
+  } catch {}
+  if (!Array.isArray(addresses) || addresses.length === 0) {
+    addresses = defaultAddresses;
+    localStorage.setItem(ADDRESS_KEY, JSON.stringify(addresses));
+  }
+
+  let selectedAddressId = localStorage.getItem(SELECTED_KEY) || addresses[0]?.id || '';
+
+  function saveAddresses() {
+    localStorage.setItem(ADDRESS_KEY, JSON.stringify(addresses));
+    localStorage.setItem(SELECTED_KEY, selectedAddressId);
+  }
+
+  function getSelectedAddress() {
+    return addresses.find(address => address.id === selectedAddressId) || addresses[0] || null;
+  }
+
+  function currentShippingMode() {
+    return document.querySelector('input[name="checkoutShipping"]:checked')?.value || 'standard';
+  }
+
+  function currentPaymentMode() {
+    return document.querySelector('input[name="checkoutPayment"]:checked')?.value || 'paypal';
+  }
+
+  function shippingCharge(subtotal) {
+    return currentShippingMode() === 'priority'
+      ? 199
+      : (subtotal >= 5000 ? 0 : 99);
+  }
+
+  function renderAddresses() {
+    if (!addressGrid) return;
+    addressGrid.innerHTML = addresses.map(address => `
+      <article class="checkout-address-card ${address.id === selectedAddressId ? 'is-selected' : ''}" data-address-id="${address.id}">
+        <div class="checkout-address-top">
+          <div class="checkout-address-label">${address.label}</div>
+          <div class="checkout-address-badge">${address.badge || 'Saved'}</div>
+        </div>
+        <div class="checkout-address-name">${address.name}</div>
+        <div class="checkout-address-phone">${address.phone}</div>
+        <div class="checkout-address-line">${address.line}</div>
+      </article>
+    `).join('');
+
+    addressGrid.querySelectorAll('.checkout-address-card').forEach(card => {
+      card.addEventListener('click', () => {
+        selectedAddressId = card.dataset.addressId || selectedAddressId;
+        saveAddresses();
+        renderAddresses();
+        renderSummary();
+      });
+    });
+  }
+
+  function renderSummary() {
+    const sub = cartSubtotal();
+    const ship = shippingCharge(sub);
+    const gst = sub * 0.18;
+    const total = sub + ship + gst;
+    const selectedAddress = getSelectedAddress();
+    const shippingLabel = currentShippingMode() === 'priority' ? 'Priority Dispatch' : 'Standard Delivery';
+    const paymentMap = {
+      paypal: 'PayPal',
+      bank: 'Bank Transfer',
+      card: 'Credit / Debit Card',
+    };
+
+    if (cartItems.length === 0) {
+      emptyState?.classList.remove('hidden');
+      summaryContent?.classList.add('hidden');
+      placeBtn && (placeBtn.disabled = true);
+      return;
+    }
+
+    emptyState?.classList.add('hidden');
+    summaryContent?.classList.remove('hidden');
+    if (placeBtn) placeBtn.disabled = false;
+
+    if (summaryItems) {
+      summaryItems.innerHTML = cartItems.map(item => `
+        <div class="checkout-item">
+          <img src="${item.image}" alt="${item.name}" onerror="this.src='https://placehold.co/68x68/EBF3FF/0066CC?text=${encodeURIComponent(item.sku)}'">
+          <div>
+            <div class="checkout-item-sku">${item.sku}</div>
+            <div class="checkout-item-name">${item.name}</div>
+            <div class="checkout-item-meta">Qty: ${item.qty} · Unit: ₹${item.price.toFixed(2)}</div>
+          </div>
+          <div class="checkout-item-price">₹${(item.qty * item.price).toFixed(2)}</div>
+        </div>
+      `).join('');
+    }
+
+    if (selectedAddressText) selectedAddressText.textContent = selectedAddress ? `${selectedAddress.label} · ${selectedAddress.line}` : 'Select an address';
+    if (shippingText) shippingText.textContent = shippingLabel;
+    if (paymentText) paymentText.textContent = paymentMap[currentPaymentMode()] || 'PayPal';
+    if (subtotalEl) subtotalEl.textContent = `₹${sub.toFixed(2)}`;
+    if (shippingCostEl) shippingCostEl.textContent = ship === 0 ? 'FREE' : `₹${ship.toFixed(2)}`;
+    if (taxEl) taxEl.textContent = `₹${gst.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
+  }
+
+  toggleAddressBtn?.addEventListener('click', () => {
+    addressFormWrap?.classList.toggle('hidden');
+  });
+
+  addressCancelBtn?.addEventListener('click', () => {
+    addressFormWrap?.classList.add('hidden');
+    addressForm?.reset();
+  });
+
+  addressForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const label = document.getElementById('checkoutAddrLabel')?.value.trim();
+    const name = document.getElementById('checkoutAddrName')?.value.trim();
+    const phone = document.getElementById('checkoutAddrPhone')?.value.trim();
+    const pin = document.getElementById('checkoutAddrPin')?.value.trim();
+    const line = document.getElementById('checkoutAddrLine')?.value.trim();
+    if (!label || !name || !phone || !pin || !line) {
+      toast('Please fill all address fields.', 'warn');
+      return;
+    }
+    const address = {
+      id: `addr_${Date.now()}`,
+      label,
+      name,
+      phone,
+      line: `${line}${pin ? `, ${pin}` : ''}`,
+      badge: 'New',
+    };
+    addresses.unshift(address);
+    selectedAddressId = address.id;
+    setDeliveryLocation(address.line);
+    saveAddresses();
+    renderAddresses();
+    renderSummary();
+    addressForm.reset();
+    addressFormWrap?.classList.add('hidden');
+    toast('Address saved for this checkout.', 'ok');
+  });
+
+  document.querySelectorAll('input[name="checkoutShipping"], input[name="checkoutPayment"]').forEach(input => {
+    input.addEventListener('change', renderSummary);
+  });
+
+  placeBtn?.addEventListener('click', () => {
+    if (cartItems.length === 0) {
+      toast('Your cart is empty.', 'warn');
+      return;
+    }
+    if (!getSelectedAddress()) {
+      toast('Please select a delivery address.', 'warn');
+      return;
+    }
+    if (invoiceEmail && !invoiceEmail.value.trim()) {
+      invoiceEmail.value = 'contact@sinelec-tech.com';
+    }
+    cartItems.splice(0, cartItems.length);
+    saveCart();
+    renderSummary();
+    toast('Order placed successfully! Our team will contact you with confirmation details.', 'ok');
+  });
+
+  renderAddresses();
+  renderSummary();
 }
 
 /* ── Wishlist ────────────────────────────────────────────────── */
@@ -993,6 +1195,122 @@ function activateMegaCategory(cat) {
 }
 
 /* ── Quote form helpers ──────────────────────────────────────── */
+function getQuoteSelectedCategoryId(row) {
+  const categorySelect = row?.querySelector('select.qinp');
+  const selectedName = categorySelect?.value?.trim();
+  if (!selectedName) return '';
+  return STORE_DATA.categories.find(c => c.name === selectedName)?.id || '';
+}
+
+function getQuoteSearchMatches(query, row) {
+  const q = query.trim().toLowerCase();
+  const categoryId = getQuoteSelectedCategoryId(row);
+  let products = [...STORE_DATA.products];
+
+  if (categoryId) {
+    products = products.filter(p => p.category === categoryId);
+  }
+
+  if (!q) return products.slice(0, 8);
+
+  return products.filter(p =>
+    p.name.toLowerCase().includes(q) ||
+    p.sku.toLowerCase().includes(q) ||
+    (p.manufacturer || '').toLowerCase().includes(q)
+  ).slice(0, 8);
+}
+
+function closeQuoteSearchDrops(exceptWrap = null) {
+  document.querySelectorAll('.quote-product-search').forEach(wrap => {
+    if (exceptWrap && wrap === exceptWrap) return;
+    wrap.querySelector('.quote-product-drop')?.classList.remove('open');
+  });
+}
+
+function selectQuoteProduct(input, product) {
+  input.value = `${product.sku} - ${product.name}`;
+  input.dataset.selectedProductId = String(product.id);
+
+  const row = input.closest('.qprow');
+  const categorySelect = row?.querySelector('select.qinp');
+  if (categorySelect && product.category) {
+    const category = STORE_DATA.categories.find(c => c.id === product.category);
+    if (category) categorySelect.value = category.name;
+  }
+
+  input.closest('.quote-product-search')?.querySelector('.quote-product-drop')?.classList.remove('open');
+}
+
+function renderQuoteSearchDrop(input) {
+  const wrap = input.closest('.quote-product-search');
+  const drop = wrap?.querySelector('.quote-product-drop');
+  const row = input.closest('.qprow');
+  if (!wrap || !drop || !row) return;
+
+  const matches = getQuoteSearchMatches(input.value, row);
+  if (!matches.length) {
+    drop.innerHTML = `<div class="quote-product-empty">No matching products found for this category.</div>`;
+    drop.classList.add('open');
+    return;
+  }
+
+  drop.innerHTML = matches.map(p => `
+    <div class="quote-product-item" data-product-id="${p.id}">
+      <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/42x42/EBF3FF/0066CC?text=${encodeURIComponent(p.sku)}'">
+      <div class="quote-product-item-info">
+        <div class="quote-product-item-sku">${p.sku}</div>
+        <div class="quote-product-item-name">${p.name}</div>
+      </div>
+      <div class="quote-product-item-meta">₹${(p.priceBreaks ? p.priceBreaks[0].price : p.price).toFixed(2)}</div>
+    </div>
+  `).join('');
+
+  drop.querySelectorAll('.quote-product-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const product = STORE_DATA.products.find(p => p.id === Number(item.dataset.productId));
+      if (product) selectQuoteProduct(input, product);
+    });
+  });
+
+  drop.classList.add('open');
+}
+
+function initQuoteProductSearch(scope = document) {
+  const roots = scope.matches?.('.qprow') ? [scope] : Array.from(scope.querySelectorAll('.qprow'));
+
+  roots.forEach(row => {
+    const input = row.querySelector('[data-product-search="true"]');
+    const categorySelect = row.querySelector('select.qinp');
+    if (!input) return;
+    if (input.dataset.quoteSearchBound === 'true') return;
+    input.dataset.quoteSearchBound = 'true';
+
+    input.addEventListener('input', () => {
+      input.dataset.selectedProductId = '';
+      closeQuoteSearchDrops(input.closest('.quote-product-search'));
+      renderQuoteSearchDrop(input);
+    });
+
+    input.addEventListener('focus', () => {
+      closeQuoteSearchDrops(input.closest('.quote-product-search'));
+      renderQuoteSearchDrop(input);
+    });
+
+    input.addEventListener('click', () => {
+      closeQuoteSearchDrops(input.closest('.quote-product-search'));
+      renderQuoteSearchDrop(input);
+    });
+
+    categorySelect?.addEventListener('change', () => {
+      input.value = '';
+      input.dataset.selectedProductId = '';
+      closeQuoteSearchDrops(input.closest('.quote-product-search'));
+      renderQuoteSearchDrop(input);
+      input.focus();
+    });
+  });
+}
+
 function addQuoteRow() {
   const rows = document.getElementById('quoteProductRows');
   if (!rows) return;
@@ -1002,7 +1320,13 @@ function addQuoteRow() {
   const num = rows.querySelectorAll('.qprow').length + 1;
   clone.querySelector('.qprow-num').textContent = num;
   clone.querySelectorAll('input, select').forEach(el => el.value = '');
+  clone.querySelectorAll('[data-quote-search-bound]').forEach(el => delete el.dataset.quoteSearchBound);
+  clone.querySelectorAll('.quote-product-drop').forEach(el => {
+    el.innerHTML = '';
+    el.classList.remove('open');
+  });
   rows.appendChild(clone);
+  initQuoteProductSearch(clone);
 }
 function toggleBilling() {
   const cb  = document.getElementById('diffBilling');
@@ -1012,6 +1336,7 @@ function toggleBilling() {
 function resetQuoteForm() {
   document.getElementById('quoteForm')?.reset();
   document.getElementById('billingSection')?.classList.add('hidden');
+  closeQuoteSearchDrops();
 }
 
 /* ── Scroll top ──────────────────────────────────────────────── */
@@ -1411,12 +1736,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     case 'request-a-quote':
     case 'quote':
+      initQuoteProductSearch();
+      document.addEventListener('click', e => {
+        if (!e.target.closest('.quote-product-search')) closeQuoteSearchDrops();
+      });
       document.getElementById('quoteForm')?.addEventListener('submit', e => {
         e.preventDefault();
         toast("Quote request submitted! We'll contact you within 24 hours.", 'ok');
         e.target.reset();
         document.getElementById('billingSection')?.classList.add('hidden');
       });
+      break;
+
+    case 'checkout':
+      initCheckoutPage();
       break;
 
     case 'about':

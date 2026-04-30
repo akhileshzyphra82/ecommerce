@@ -15,22 +15,34 @@ require_once 'header.php';
           <span class="qhero-tag">Fast · Reliable · Competitive</span>
           <h1 class="qhero-title">Request a Quotation</h1>
           <p class="qhero-desc">Share your requirements and we'll get back with the best price within 24 hours.</p>
-          <div class="qhero-badges">
-            <span class="qhero-badge">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              24h Response
+	          <div class="qhero-badges">
+	            <span class="qhero-badge">
+	              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+	              24h Response
             </span>
             <span class="qhero-badge">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               Genuine Products
             </span>
-            <span class="qhero-badge">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Pan-India Delivery
-            </span>
-          </div>
-        </div>
-        <div class="qhero-steps">
+	            <span class="qhero-badge">
+	              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+	              Pan-India Delivery
+	            </span>
+	          </div>
+	          <a href="https://wa.me/919876543210" class="qhero-whatsapp" target="_blank" rel="noopener" aria-label="Get instant quotes on WhatsApp">
+	            <span class="qhero-whatsapp-icon" aria-hidden="true">
+	              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+	                <path d="M20.52 3.48A11.8 11.8 0 0012.12 0C5.55 0 .2 5.34.2 11.92c0 2.1.55 4.15 1.6 5.95L0 24l6.33-1.75a11.9 11.9 0 005.79 1.49h.01c6.57 0 11.92-5.35 11.92-11.92 0-3.18-1.24-6.17-3.53-8.34zm-8.4 18.24h-.01a9.9 9.9 0 01-5.03-1.37l-.36-.21-3.76 1.04 1-3.66-.24-.38a9.87 9.87 0 01-1.52-5.22c0-5.45 4.44-9.89 9.91-9.89 2.64 0 5.12 1.02 6.98 2.88a9.8 9.8 0 012.9 7c0 5.46-4.45 9.9-9.87 9.9zm5.43-7.42c-.3-.15-1.76-.86-2.03-.96-.27-.1-.47-.15-.67.15s-.77.96-.94 1.16c-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.46a8.97 8.97 0 01-1.67-2.08c-.18-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.62-.92-2.23-.24-.57-.49-.5-.67-.51h-.57c-.2 0-.52.08-.8.38-.27.3-1.03 1.01-1.03 2.46 0 1.44 1.05 2.84 1.2 3.03.15.2 2.06 3.15 5 4.41.7.3 1.24.47 1.67.6.7.22 1.34.19 1.85.12.56-.08 1.76-.72 2-1.42.25-.7.25-1.3.17-1.42-.07-.12-.27-.2-.57-.35z"/>
+	              </svg>
+	            </span>
+	            <span class="qhero-whatsapp-copy">
+	              <strong>Get instant quotes on WhatsApp</strong>
+	              <small>Fast reply for urgent and bulk enquiries</small>
+	            </span>
+	            <span class="qhero-whatsapp-badge">Live</span>
+	          </a>
+	        </div>
+	        <div class="qhero-steps">
           <div class="qstep"><div class="qstep-num">1</div><div class="qstep-label">Fill Form</div></div>
           <div class="qstep-arrow">›</div>
           <div class="qstep"><div class="qstep-num">2</div><div class="qstep-label">We Review</div></div>
@@ -78,7 +90,17 @@ require_once 'header.php';
                     </div>
                     <div class="qfield">
                       <label class="qlabel">Product / Part Number <span class="qreq">*</span></label>
-                      <input type="text" class="qinp" placeholder="e.g. STM32F103C8T6 or part number" required>
+                      <div class="quote-product-search">
+                        <input
+                          type="text"
+                          class="qinp quote-product-input"
+                          placeholder="Select or search product"
+                          autocomplete="off"
+                          data-product-search="true"
+                          required
+                        >
+                        <div class="quote-product-drop"></div>
+                      </div>
                     </div>
                     <div class="qfield qfield-qty">
                       <label class="qlabel">Qty <span class="qreq">*</span></label>

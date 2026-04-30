@@ -8,7 +8,18 @@
  *                           about, contact, product
  *   $storeData   (array)  — from data/store_data.php
  */
+// ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// require_once __DIR__ . '/../controller/website_controller.php';
 
+// $objWebsiteController = new WebsiteController();
+
+// $arrActivity=$objWebsiteController->getActivity();
+
+// echo '<pre>';
+// print_r($arrActivity);
+// echo '</pre>';
+// die;
 $currentPage = $currentPage ?? 'home';
 $pageTitle   ='Sinelec Technologies : Electronic Module and Component Distributor & Expert chip programming services';
 
@@ -81,6 +92,7 @@ $productMegaMenu = [
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../assets/css/chatbot.css">
 <script>
 window.STORE_DATA   = <?= json_encode($storeData ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
 window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
@@ -156,7 +168,7 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
       <button class="h-cart" onclick="openCart()" aria-label="Shopping cart">
         <span class="h-cart-icon-wrap">
           <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
-          <span class="cart-count hidden">0</span>
+          <span class="cart-count cart-count-initial">0</span>
         </span>
         <span class="h-cart-label">Cart</span>
       </button>
