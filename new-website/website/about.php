@@ -265,56 +265,82 @@ require_once 'header.php';
         <div class="sec-subtitle">Talk to our team for product enquiries, OEM support, and electronics project requirements.</div>
       </div>
     </div>
-    <div class="about-corp-contact-grid">
-      <div class="about-corp-contact-panel">
-        <div class="about-corp-contact-card">
-          <div class="about-corp-contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.1 2.27 2 2 0 012.07.1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l.91-.91a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+    <div class="about-corp-contact-grid about-corp-contact-grid--v2">
+      <aside class="about-corp-contact-panel about-corp-contact-panel--v2">
+        <div class="about-corp-contact-hero">
+          <span class="about-corp-contact-kicker">Quick Response Desk</span>
+          <h3>Let us help with your next electronics project.</h3>
+          <p>Share your sourcing or engineering requirement and our team will guide you with the right next step.</p>
+        </div>
+        <div class="about-corp-contact-cards">
+          <div class="about-corp-contact-card">
+            <div class="about-corp-contact-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.1 2.27 2 2 0 012.07.1h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.91 7.91a16 16 0 006.16 6.16l.91-.91a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+            </div>
+            <div>
+              <div class="about-corp-contact-label">Phone</div>
+              <div class="about-corp-contact-value about-corp-contact-value--nowrap">+49 (0)8165-9906178</div>
+              <div class="about-corp-contact-note">Mon-Fri, 9:00 AM - 6:00 PM CET</div>
+            </div>
           </div>
-          <div>
-            <div class="about-corp-contact-label">Call us</div>
-            <div class="about-corp-contact-value">+91-9876543210</div>
-            <div class="about-corp-contact-note">Mon-Sat, 9AM-6PM IST</div>
+          <div class="about-corp-contact-card">
+            <div class="about-corp-contact-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <div class="about-corp-contact-label">Email</div>
+              <div class="about-corp-contact-value">contact@sinelec-tech.com</div>
+              <div class="about-corp-contact-note">Typical reply within 24 business hours</div>
+            </div>
+          </div>
+          <div class="about-corp-contact-card">
+            <div class="about-corp-contact-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M6 9V2h12v20H6v-7"/><polyline points="6 15 2 15 2 9 6 9"/><line x1="10" y1="6" x2="14" y2="6"/><line x1="10" y1="10" x2="14" y2="10"/></svg>
+            </div>
+            <div>
+              <div class="about-corp-contact-label">Fax</div>
+              <div class="about-corp-contact-value about-corp-contact-value--nowrap">+49 (0)8165-9039998</div>
+              <div class="about-corp-contact-note">For purchase orders and official documents</div>
+            </div>
+          </div>
+          <div class="about-corp-contact-card">
+            <div class="about-corp-contact-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="about-corp-contact-label">Address</div>
+              <div class="about-corp-contact-value">Brachvogelweg 9, 85375 Neufahrn, Germany</div>
+              <div class="about-corp-contact-note">Serving customers across Europe and global regions</div>
+            </div>
           </div>
         </div>
-        <div class="about-corp-contact-card">
-          <div class="about-corp-contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-          </div>
-          <div>
-            <div class="about-corp-contact-label">Email</div>
-            <div class="about-corp-contact-value">info@sinelec-tech.com</div>
-            <div class="about-corp-contact-note">Replies within 24 hours</div>
-          </div>
-        </div>
-        <div class="about-corp-contact-card">
-          <div class="about-corp-contact-icon">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          </div>
-          <div>
-            <div class="about-corp-contact-label">Locations</div>
-            <div class="about-corp-contact-value">Delhi, India</div>
-            <div class="about-corp-contact-note">Serving customers across multiple regions</div>
-          </div>
-        </div>
-      </div>
+      </aside>
 
-      <div class="about-corp-form-wrap">
-        <h3 class="contact-form-title">Send a Message</h3>
+      <div class="about-corp-form-wrap about-corp-form-wrap--v2">
+        <div class="about-corp-form-head">
+          <h3 class="contact-form-title">Send a Message</h3>
+          <p>Tell us what you need and we will respond with the right technical or commercial support.</p>
+        </div>
         <form id="contactForm" novalidate>
           <div class="form-row">
             <div class="form-group">
               <label class="form-label">Your Name</label>
-              <input type="text" class="form-inp" placeholder="Rajesh Kumar" required>
+              <input type="text" class="form-inp" placeholder="Aarav Sharma" required>
             </div>
             <div class="form-group">
-              <label class="form-label">Phone</label>
-              <input type="tel" class="form-inp" placeholder="+91 98765 43210" required>
+              <label class="form-label">Company</label>
+              <input type="text" class="form-inp" placeholder="Company / Organization">
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input type="email" class="form-inp" placeholder="you@example.com" required>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-inp" placeholder="+49 (0) 0000 000000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-inp" placeholder="you@company.com" required>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Subject</label>
@@ -328,7 +354,7 @@ require_once 'header.php';
           </div>
           <div class="form-group">
             <label class="form-label">Message</label>
-            <textarea class="form-inp textarea" placeholder="Tell us about your product, sourcing need, or project requirement." required></textarea>
+            <textarea class="form-inp textarea" placeholder="Share your requirement, part numbers, quantity, timeline, and expected support." required></textarea>
           </div>
           <button type="submit" class="btn btn-blue contact-submit-btn">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>

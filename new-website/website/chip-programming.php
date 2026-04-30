@@ -74,64 +74,34 @@ require_once 'header.php';
         <div class="sec-subtitle">We program all major MCU families</div>
       </div>
     </div>
-    <div class="mfr-grid">
+    <div class="platform-grid">
       <?php
       $platforms = [
-        ['name' => 'Arduino / AVR',  'note' => 'Uno, Nano, Mega, Pro Mini'],
-        ['name' => 'STM32',          'note' => 'F0 / F1 / F4 / G0 / H7 series'],
-        ['name' => 'ESP32 / ESP8266','note' => 'Wi-Fi + BT, custom firmware'],
-        ['name' => 'PIC',            'note' => 'PIC16 / PIC18 / PIC32'],
-        ['name' => 'nRF52 / nRF5340','note' => 'Bluetooth 5, Zigbee, Thread'],
-        ['name' => 'RP2040',         'note' => 'Raspberry Pi Pico platform'],
-        ['name' => 'MSP430',         'note' => 'Ultra-low-power TI MCUs'],
-        ['name' => 'RISC-V',         'note' => 'GD32, CH32, custom cores'],
+        ['name' => 'Arduino / AVR',  'note' => 'Uno, Nano, Mega, Pro Mini', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/arduino.svg', 'accent' => 'platform-card--teal'],
+        ['name' => 'STM32',          'note' => 'F0 / F1 / F4 / G0 / H7 series', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/stmicroelectronics.svg', 'accent' => 'platform-card--blue'],
+        ['name' => 'ESP32 / ESP8266','note' => 'Wi-Fi + BT, custom firmware', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/espressif.svg', 'accent' => 'platform-card--orange'],
+        ['name' => 'PIC',            'note' => 'PIC16 / PIC18 / PIC32', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/microchiptechnology.svg', 'accent' => 'platform-card--red'],
+        ['name' => 'nRF52 / nRF5340','note' => 'Bluetooth 5, Zigbee, Thread', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/nordicsemiconductor.svg', 'accent' => 'platform-card--indigo'],
+        ['name' => 'RP2040',         'note' => 'Raspberry Pi Pico platform', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/raspberrypi.svg', 'accent' => 'platform-card--pink'],
+        ['name' => 'MSP430',         'note' => 'Ultra-low-power TI MCUs', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/texasinstruments.svg', 'accent' => 'platform-card--purple'],
+        ['name' => 'RISC-V',         'note' => 'GD32, CH32, custom cores', 'logo' => 'https://cdn.jsdelivr.net/npm/simple-icons@v16/icons/riscv.svg', 'accent' => 'platform-card--gold'],
       ];
       foreach ($platforms as $p):
       ?>
-      <div class="mfr-card">
-        <div class="mfr-logo-placeholder"><?= htmlspecialchars(substr($p['name'], 0, 2)) ?></div>
-        <div class="mfr-card-name"><?= htmlspecialchars($p['name']) ?></div>
-        <div class="mfr-card-country"><?= htmlspecialchars($p['note']) ?></div>
-      </div>
+      <article class="platform-card <?= htmlspecialchars($p['accent']) ?>">
+        <div class="platform-logo-wrap">
+          <img
+            src="<?= htmlspecialchars($p['logo']) ?>"
+            alt="<?= htmlspecialchars($p['name']) ?> logo"
+            class="platform-logo"
+            loading="lazy"
+            onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=&quot;platform-logo-fallback&quot;><?= htmlspecialchars(substr($p['name'], 0, 2)) ?></span>';"
+          >
+        </div>
+        <h3 class="platform-name"><?= htmlspecialchars($p['name']) ?></h3>
+        <p class="platform-note"><?= htmlspecialchars($p['note']) ?></p>
+      </article>
       <?php endforeach; ?>
-    </div>
-  </div>
-
-  <!-- Pricing -->
-  <div class="services-strip">
-    <div class="services-strip-hd">
-      <div>
-        <div class="services-strip-eyebrow">Transparent Pricing</div>
-        <h2 class="services-strip-title">Simple, Flat-Rate Programming Fees</h2>
-        <p class="services-strip-sub">No hidden charges. Volume discounts available for 10+ units.</p>
-      </div>
-      <a href="request-a-quote" class="btn btn-yellow btn-lg flex-shrink-0">Get Custom Quote</a>
-    </div>
-    <div class="services-strip-cards">
-      <div class="srv-strip-card">
-        <div class="srv-strip-card-icon">⚡</div>
-        <div class="srv-strip-card-title">Standard (1–9 chips)</div>
-        <div class="srv-strip-card-desc">Single or small batch programming with full test report</div>
-        <div class="srv-strip-card-price">From ₹499/chip</div>
-      </div>
-      <div class="srv-strip-card">
-        <div class="srv-strip-card-icon">📦</div>
-        <div class="srv-strip-card-title">Volume (10–99 chips)</div>
-        <div class="srv-strip-card-desc">Discounted batch programming — ideal for prototypes and small runs</div>
-        <div class="srv-strip-card-price">From ₹299/chip</div>
-      </div>
-      <div class="srv-strip-card">
-        <div class="srv-strip-card-icon">🏭</div>
-        <div class="srv-strip-card-title">Production (100+ chips)</div>
-        <div class="srv-strip-card-desc">High-volume production programming with QC certificate</div>
-        <div class="srv-strip-card-price">Custom Quote</div>
-      </div>
-      <div class="srv-strip-card">
-        <div class="srv-strip-card-icon">🔧</div>
-        <div class="srv-strip-card-title">Bring Your Own Chip</div>
-        <div class="srv-strip-card-desc">Ship us your chips — we program and return within 48 hours</div>
-        <div class="srv-strip-card-price">From ₹149/chip</div>
-      </div>
     </div>
   </div>
 

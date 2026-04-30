@@ -69,32 +69,56 @@ require_once 'header.php';
     </div>
     <div class="resources-grid">
       <div class="resource-card">
-        <div class="resource-card-icon resource-card-icon--green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <div class="tutorial-card-video">
+          <iframe
+            src="https://www.youtube.com/embed/M7lc1UVf-VE"
+            title="STM32 HAL tutorial example"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
         <div class="resource-card-title">Getting Started with STM32 HAL</div>
         <div class="resource-card-desc">Configure GPIO, timers, UART, and SPI on STM32 using STM32CubeIDE and HAL drivers.</div>
         <a href="#" class="resource-card-link">Read Guide →</a>
       </div>
       <div class="resource-card">
-        <div class="resource-card-icon resource-card-icon--green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <div class="tutorial-card-video">
+          <iframe
+            src="https://www.youtube.com/embed/jNQXAC9IVRw"
+            title="ESP32 MQTT tutorial example"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
         <div class="resource-card-title">ESP32 Wi-Fi + MQTT IoT Project</div>
         <div class="resource-card-desc">Connect ESP32 to Wi-Fi, publish sensor data over MQTT to a cloud dashboard.</div>
         <a href="#" class="resource-card-link">Read Guide →</a>
       </div>
       <div class="resource-card">
-        <div class="resource-card-icon resource-card-icon--green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <div class="tutorial-card-video">
+          <iframe
+            src="https://www.youtube.com/embed/ysz5S6PUM-U"
+            title="Op amp circuit design tutorial example"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
         <div class="resource-card-title">Op-Amp Circuit Design Basics</div>
         <div class="resource-card-desc">Inverting, non-inverting, comparator, and integrator circuits — practical design walkthrough.</div>
         <a href="#" class="resource-card-link">Read Guide →</a>
       </div>
       <div class="resource-card">
-        <div class="resource-card-icon resource-card-icon--green">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <div class="tutorial-card-video">
+          <iframe
+            src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+            title="LM2596 buck converter tutorial example"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
         </div>
         <div class="resource-card-title">Buck Converter Design with LM2596</div>
         <div class="resource-card-desc">Step-down regulator design — inductor selection, output filtering, PCB layout tips.</div>

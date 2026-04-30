@@ -376,6 +376,12 @@ function pdpAddToCart() {
   if (!CURRENT_PRODUCT) return;
   const qty = parseInt(document.getElementById('pdpQty')?.value || 1);
   cartAdd(CURRENT_PRODUCT, qty);
+}
+
+function pdpBuyNow() {
+  if (!CURRENT_PRODUCT) return;
+  const qty = parseInt(document.getElementById('pdpQty')?.value || 1);
+  cartAdd(CURRENT_PRODUCT, qty);
   openCart();
 }
 
@@ -1022,6 +1028,266 @@ function checkMobile() {
   if (btn) btn.style.display = window.innerWidth <= 768 ? 'flex' : 'none';
 }
 
+/* ── Delivery location modal ─────────────────────────────────── */
+const DELIVERY_KEY = 'sinelec_delivery_location';
+const DEFAULT_DELIVERY = 'Delhi 110001';
+
+function formatDeliveryLabel(fullAddress) {
+  const text = (fullAddress || '').trim();
+  if (!text) return DEFAULT_DELIVERY;
+  if (text.length <= 22) return text;
+
+  const pinMatch = text.match(/\b\d{5,6}\b/);
+  const parts = text.split(',').map(s => s.trim()).filter(Boolean);
+  const city = parts.length >= 2 ? parts[parts.length - 2] : parts[0];
+  if (pinMatch) return `${city} ${pinMatch[0]}`;
+  return `${text.slice(0, 20)}…`;
+}
+
+function setDeliveryLocation(value) {
+  const text = (value || '').trim();
+  if (!text) return;
+  const locText = document.getElementById('deliveryLocationText');
+  const display = formatDeliveryLabel(text);
+  if (locText) locText.textContent = display;
+  const btn = document.getElementById('headerDeliveryBtn');
+  if (btn) btn.setAttribute('title', text);
+  try { localStorage.setItem(DELIVERY_KEY, text); } catch {}
+}
+
+function closeDeliveryModal() {
+  const modal = document.getElementById('deliveryModal');
+  if (!modal) return;
+  modal.hidden = true;
+  document.body.style.overflow = '';
+}
+
+function openDeliveryModal() {
+  const modal = document.getElementById('deliveryModal');
+  if (!modal) return;
+  let currentValue = '';
+  try { currentValue = localStorage.getItem(DELIVERY_KEY) || ''; } catch {}
+  if (!currentValue) currentValue = document.getElementById('deliveryLocationText')?.textContent?.trim() || '';
+  const manualInput = document.getElementById('manualLocationInput');
+  if (manualInput) manualInput.value = currentValue;
+  document.querySelectorAll('input[name="deliveryAddress"]').forEach(input => {
+    if (!(input instanceof HTMLInputElement)) return;
+    input.checked = input.value === currentValue;
+  });
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function initDeliveryLocationModal() {
+  const headerBtn = document.getElementById('headerDeliveryBtn');
+  const modal = document.getElementById('deliveryModal');
+  const closeEls = Array.from(document.querySelectorAll('[data-delivery-close]'));
+  const useCurrentBtn = document.getElementById('useCurrentLocBtn');
+  const manualInput = document.getElementById('manualLocationInput');
+  const applyManualBtn = document.getElementById('applyManualLocBtn');
+  const addressList = document.getElementById('deliveryAddressList');
+  if (!headerBtn || !modal) return;
+
+  try {
+    const savedLoc = localStorage.getItem(DELIVERY_KEY);
+    if (savedLoc) setDeliveryLocation(savedLoc);
+  } catch {}
+
+  headerBtn.addEventListener('click', openDeliveryModal);
+  headerBtn.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openDeliveryModal();
+    }
+  });
+  closeEls.forEach(el => el.addEventListener('click', closeDeliveryModal));
+
+  useCurrentBtn?.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+      toast('Geolocation not supported. Please enter location manually.', 'warn');
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      () => {
+        setDeliveryLocation('Current Location');
+        closeDeliveryModal();
+      },
+      () => {
+        toast('Unable to detect location. Please enter manually.', 'warn');
+      },
+      { enableHighAccuracy: false, timeout: 7000, maximumAge: 60000 }
+    );
+  });
+
+  applyManualBtn?.addEventListener('click', () => {
+    const val = manualInput?.value.trim() || '';
+    if (!val) {
+      toast('Please enter a location first.', 'warn');
+      return;
+    }
+    setDeliveryLocation(val);
+    closeDeliveryModal();
+  });
+
+  manualInput?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      applyManualBtn?.click();
+    }
+  });
+
+  addressList?.addEventListener('change', e => {
+    const target = e.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    if (target.name !== 'deliveryAddress') return;
+    setDeliveryLocation(target.value);
+    closeDeliveryModal();
+  });
+
+  addressList?.addEventListener('click', e => {
+    const actionBtn = e.target.closest('[data-address-action]');
+    if (!(actionBtn instanceof HTMLElement)) return;
+    e.preventDefault();
+    e.stopPropagation();
+    const action = actionBtn.dataset.addressAction;
+    const item = actionBtn.closest('.delivery-address-item');
+    if (!(item instanceof HTMLElement)) return;
+    const radio = item.querySelector('input[name="deliveryAddress"]');
+    const label = item.querySelector('.delivery-address-main');
+    if (!(radio instanceof HTMLInputElement) || !(label instanceof HTMLElement)) return;
+
+    if (action === 'edit') {
+      const next = window.prompt('Edit address', radio.value);
+      if (!next || !next.trim()) return;
+      const updated = next.trim();
+      radio.value = updated;
+      label.textContent = updated;
+      if (radio.checked) setDeliveryLocation(updated);
+      return;
+    }
+
+    if (action === 'delete') {
+      const isSelected = radio.checked;
+      item.remove();
+      if (isSelected) {
+        const first = addressList.querySelector('input[name="deliveryAddress"]');
+        if (first instanceof HTMLInputElement) {
+          first.checked = true;
+          setDeliveryLocation(first.value);
+        } else {
+          setDeliveryLocation(DEFAULT_DELIVERY);
+        }
+      }
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal && !modal.hidden) closeDeliveryModal();
+  });
+}
+
+/* ── Auth modal ─────────────────────────────────────────────── */
+function initAuthModal() {
+  const trigger = document.getElementById('headerAccountBtn');
+  const modal = document.getElementById('authModal');
+  if (!trigger || !modal) return;
+
+  const closeEls = Array.from(document.querySelectorAll('[data-auth-close]'));
+  const signInPanel = document.getElementById('authSignInPanel');
+  const signUpPanel = document.getElementById('authSignUpPanel');
+  const title = document.getElementById('authModalTitle');
+  const desc = document.getElementById('authModalDesc');
+  const switchBtns = Array.from(document.querySelectorAll('[data-auth-switch]'));
+  const tabBtns = Array.from(document.querySelectorAll('.auth-switch-tab'));
+  const signInForm = document.getElementById('authSignInForm');
+  const signUpForm = document.getElementById('authSignUpForm');
+  const forgotBtn = document.getElementById('authForgotBtn');
+  const passToggles = Array.from(document.querySelectorAll('[data-toggle-pass]'));
+
+  function switchAuth(mode) {
+    const isSignIn = mode !== 'signup';
+    signInPanel?.classList.toggle('is-active', isSignIn);
+    signUpPanel?.classList.toggle('is-active', !isSignIn);
+    if (title) title.textContent = isSignIn ? 'Sign In' : 'Register';
+    if (desc) {
+      desc.textContent = isSignIn
+        ? 'Sign in to continue.'
+        : 'Create an account in seconds.';
+    }
+    tabBtns.forEach(btn => btn.classList.toggle('is-active', (btn.dataset.authSwitch || 'signin') === (isSignIn ? 'signin' : 'signup')));
+  }
+
+  function openAuth(mode = 'signin') {
+    switchAuth(mode);
+    modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeAuth() {
+    modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  trigger.addEventListener('click', () => openAuth('signin'));
+  trigger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      openAuth('signin');
+    }
+  });
+  closeEls.forEach(el => el.addEventListener('click', closeAuth));
+  switchBtns.forEach(btn => btn.addEventListener('click', () => switchAuth(btn.dataset.authSwitch || 'signin')));
+
+  forgotBtn?.addEventListener('click', () => {
+    toast('Password recovery link flow will be available soon.', 'warn');
+  });
+
+  passToggles.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.passTarget || '';
+      const input = document.getElementById(targetId);
+      if (!(input instanceof HTMLInputElement)) return;
+      input.type = input.type === 'password' ? 'text' : 'password';
+    });
+  });
+
+  signInForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const user = document.getElementById('authUserId')?.value.trim();
+    const pass = document.getElementById('authPassword')?.value;
+    if (!user || !pass) {
+      toast('Please enter User ID and Password.', 'warn');
+      return;
+    }
+    toast('Signed in successfully.', 'ok');
+    closeAuth();
+  });
+
+  signUpForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    const first = document.getElementById('authFirstName')?.value.trim();
+    const last = document.getElementById('authLastName')?.value.trim();
+    const email = document.getElementById('authEmail')?.value.trim();
+    const phone = document.getElementById('authPhone')?.value.trim();
+    const pass = document.getElementById('authPassCreate')?.value;
+    const confirm = document.getElementById('authPassConfirm')?.value;
+    if (!first || !last || !email || !phone || !pass || !confirm) {
+      toast('Please fill all required fields.', 'warn');
+      return;
+    }
+    if (pass !== confirm) {
+      toast('Password and Confirm Password do not match.', 'warn');
+      return;
+    }
+    toast('Account created successfully.', 'ok');
+    closeAuth();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal && !modal.hidden) closeAuth();
+  });
+}
+
 /* ═══════════════════════════════════════════════════════════════
    DOMContentLoaded — page-aware init
 ═══════════════════════════════════════════════════════════════ */
@@ -1031,6 +1297,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartUI();
   initScrollTop();
   renderCompareBar();
+  initDeliveryLocationModal();
+  initAuthModal();
 
   /* Search */
   const sf = document.getElementById('searchField');
