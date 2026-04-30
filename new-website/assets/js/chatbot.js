@@ -25,6 +25,7 @@
   const company = knowledge.company || {};
   const intents = Array.isArray(knowledge.intents) ? knowledge.intents : [];
   const suggestedQuestions = Array.isArray(knowledge.suggested_questions) ? knowledge.suggested_questions : [];
+  const AUTO_OPEN_KEY = 'sinela_chatbot_auto_open';
 
   let hasAutoOpened = false;
   let suggestionsExpanded = false;
@@ -274,7 +275,12 @@
     setOpenState(true);
   });
 
-  closeBtn.addEventListener('click', () => setOpenState(false));
+  closeBtn.addEventListener('click', () => {
+    setOpenState(false);
+    try {
+      localStorage.setItem(AUTO_OPEN_KEY, 'dismissed');
+    } catch {}
+  });
 
   form.addEventListener('submit', event => {
     event.preventDefault();
@@ -290,7 +296,12 @@
   addGreeting();
   renderSuggestionsInline();
 
-  if (root.dataset.autoOpen === 'true' && !hasAutoOpened) {
+  let shouldAutoOpen = root.dataset.autoOpen === 'true';
+  try {
+    shouldAutoOpen = shouldAutoOpen && localStorage.getItem(AUTO_OPEN_KEY) !== 'dismissed';
+  } catch {}
+
+  if (shouldAutoOpen && !hasAutoOpened) {
     hasAutoOpened = true;
     window.setTimeout(() => setOpenState(true), 700);
   }
