@@ -12,13 +12,16 @@ $company = $sinelaKnowledge['company'] ?? [];
   >
     <span class="sinela-chatbot-fab-ring"></span>
     <span class="sinela-chatbot-fab-core">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <rect x="7" y="8" width="10" height="8" rx="3" stroke="currentColor" stroke-width="1.8"/>
-        <path d="M9 5.5V4.2M15 5.5V4.2M4.8 10.2H3.5M20.5 10.2H19.2M6.2 18.2l-1 1M17.8 18.2l1 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <circle cx="10" cy="11.4" r="1" fill="currentColor"/>
-        <circle cx="14" cy="11.4" r="1" fill="currentColor"/>
-        <path d="M10 14c.6.5 1.2.8 2 .8s1.4-.3 2-.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-        <path d="M12 16v2.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <path d="M16 6.2V4.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="16" cy="3.4" r="1.6" fill="currentColor"/>
+        <rect x="8" y="8" width="16" height="13.5" rx="5.2" stroke="currentColor" stroke-width="2.2"/>
+        <path d="M12.6 23.4h6.8L16 27l-3.4-3.6z" fill="currentColor"/>
+        <circle cx="13" cy="14" r="1.35" fill="currentColor"/>
+        <circle cx="19" cy="14" r="1.35" fill="currentColor"/>
+        <path d="M12.8 18c.9.9 1.9 1.3 3.2 1.3 1.2 0 2.3-.4 3.2-1.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M6.2 11.4c-1.2.8-2 2.2-2 3.9 0 1.7.8 3.1 2 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
+        <path d="M25.8 11.4c1.2.8 2 2.2 2 3.9 0 1.7-.8 3.1-2 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
       </svg>
     </span>
   </button>
@@ -27,13 +30,16 @@ $company = $sinelaKnowledge['company'] ?? [];
     <header class="sinela-chatbot-header">
       <div class="sinela-chatbot-brand">
         <span class="sinela-chatbot-brand-mark" aria-hidden="true">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-            <rect x="7" y="8" width="10" height="8" rx="3" stroke="currentColor" stroke-width="1.8"/>
-            <path d="M9 5.5V4.2M15 5.5V4.2M4.8 10.2H3.5M20.5 10.2H19.2M6.2 18.2l-1 1M17.8 18.2l1 1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <circle cx="10" cy="11.4" r="1" fill="currentColor"/>
-            <circle cx="14" cy="11.4" r="1" fill="currentColor"/>
-            <path d="M10 14c.6.5 1.2.8 2 .8s1.4-.3 2-.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M12 16v2.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          <svg width="24" height="24" viewBox="0 0 32 32" fill="none">
+            <path d="M16 6.2V4.6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="16" cy="3.4" r="1.6" fill="currentColor"/>
+            <rect x="8" y="8" width="16" height="13.5" rx="5.2" stroke="currentColor" stroke-width="2.2"/>
+            <path d="M12.6 23.4h6.8L16 27l-3.4-3.6z" fill="currentColor"/>
+            <circle cx="13" cy="14" r="1.35" fill="currentColor"/>
+            <circle cx="19" cy="14" r="1.35" fill="currentColor"/>
+            <path d="M12.8 18c.9.9 1.9 1.3 3.2 1.3 1.2 0 2.3-.4 3.2-1.3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6.2 11.4c-1.2.8-2 2.2-2 3.9 0 1.7.8 3.1 2 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
+            <path d="M25.8 11.4c1.2.8 2 2.2 2 3.9 0 1.7-.8 3.1-2 3.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" opacity=".9"/>
           </svg>
         </span>
         <div>

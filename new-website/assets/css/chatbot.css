@@ -31,17 +31,26 @@
   justify-content: center;
   border: none;
   border-radius: 50%;
-  background: linear-gradient(135deg, #ffcc00, #ffb300);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,.18) 0, rgba(255,255,255,.06) 16%, rgba(255,255,255,0) 30%),
+    linear-gradient(135deg, #131a2e 0%, #153a73 58%, #1c5ed7 100%);
   color: #fff;
-  box-shadow: 0 18px 36px rgba(255, 191, 0, 0.3);
+  box-shadow:
+    0 18px 36px rgba(7, 16, 33, 0.34),
+    inset 0 1px 0 rgba(255,255,255,.1),
+    inset 0 -12px 18px rgba(0, 0, 0, .22);
   cursor: pointer;
   overflow: visible;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease, filter 0.22s ease;
 }
 
 .sinela-chatbot-fab:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 42px rgba(255, 191, 0, 0.36);
+  box-shadow:
+    0 24px 44px rgba(7, 16, 33, 0.42),
+    inset 0 1px 0 rgba(255,255,255,.12),
+    inset 0 -12px 18px rgba(0, 0, 0, .24);
+  filter: saturate(1.08);
 }
 
 .sinela-chatbot-fab:focus-visible,
@@ -56,10 +65,11 @@
 
 .sinela-chatbot-fab-ring {
   position: absolute;
-  inset: -6px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(37, 211, 102, 0.22), rgba(27, 119, 243, 0.02) 70%);
-  animation: sinelaFabPulse 2.8s ease-in-out infinite;
+  inset: -9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(42, 130, 255, 0.22) 0, rgba(42, 130, 255, 0.08) 42%, rgba(42, 130, 255, 0) 74%);
+  animation: sinelaFabAura 3.2s ease-in-out infinite;
   z-index: -1;
 }
 
@@ -70,17 +80,20 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
-  box-shadow: none;
+  background:
+    radial-gradient(circle at 50% 35%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
   color: #fff;
-  transform-origin: bottom center;
-  animation: sinelaFabWave 2.4s ease-in-out infinite;
+  transform-origin: 50% 60%;
+  animation: sinelaFabFloat 3s ease-in-out infinite;
 }
 
 .sinela-chatbot-fab-core svg {
   display: block;
-  width: 35px;
-  height: 35px;
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 8px rgba(255,255,255,.06));
 }
 
 .sinela-chatbot-window {
@@ -140,13 +153,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.14);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
 }
 
 .sinela-chatbot-brand-mark svg {
   display: block;
+  width: 28px;
+  height: 28px;
 }
 
 .sinela-chatbot-title {
@@ -401,18 +417,24 @@
   display: block;
 }
 
-@keyframes sinelaFabPulse {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.08); opacity: 0.45; }
+@keyframes sinelaFabFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.015);
+  }
 }
 
-@keyframes sinelaFabWave {
-  0%, 100% { transform: rotate(0deg) translateY(0); }
-  15% { transform: rotate(8deg) translateY(-1px); }
-  30% { transform: rotate(-6deg) translateY(0); }
-  45% { transform: rotate(7deg) translateY(-1px); }
-  60% { transform: rotate(-4deg) translateY(0); }
-  75% { transform: rotate(3deg) translateY(-1px); }
+@keyframes sinelaFabAura {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.82;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.38;
+  }
 }
 
 @keyframes sinelaThinkingDots {
