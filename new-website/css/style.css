@@ -52,7 +52,7 @@
   --bg-page:    #F4F6F8;
   --bg-white:   #FFFFFF;
   --bg-card:    #FFFFFF;
-  --bg-header:  var(--navy);
+  --bg-header:  #f8f9fa;
   --bg-nav:     var(--navy-light);
   --bg-subtle:  var(--gray-50);
 
@@ -161,6 +161,7 @@ ul, ol { list-style: none; }
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
+  box-shadow: 0 2px 8px rgb(0 0 0 / .08);
 }
 
 .header-main {
@@ -184,22 +185,23 @@ ul, ol { list-style: none; }
   line-height: 0;
   align-self: center;
 }
-.logo:hover { border-color: rgba(255,255,255,.35); }
+.logo:hover { border-color: rgba(0,0,0,.12); }
 .logo svg { display: block; }
+.logo-img { height: 48px; width: 140px; object-position: left center; display: block; }
 
 /* Shared two-line label/value pattern (Delivery, Account, Orders) */
 .h-label {
   display: block;
   font-size: 11px;
   font-weight: var(--fw-normal);
-  color: rgba(255,255,255,.70);
+  color: var(--text-muted);
   line-height: 1.3;
 }
 .h-value {
   display: flex;
   align-items: center;
   gap: 3px;
-  color: white;
+  color: var(--text-h);
   font-size: 13px;
   font-weight: var(--fw-bold);
   line-height: 1.3;
@@ -219,7 +221,7 @@ ul, ol { list-style: none; }
   white-space: nowrap;
   flex-shrink: 0;
 }
-.header-delivery:hover { border-color: rgba(255,255,255,.35); }
+.header-delivery:hover { border-color: rgba(0,0,0,.12); }
 .delivery-loc-text {
   display: inline-block;
   max-width: 130px;
@@ -654,10 +656,11 @@ ul, ol { list-style: none; }
   overflow: hidden;
   position: relative;
   background: white;
+  border: 1.5px solid var(--gray-300);
 }
 .header-search:focus-within {
-  outline: 2px solid var(--yellow);
-  outline-offset: 0;
+  border-color: var(--navy);
+  outline: none;
 }
 .search-cat-btn {
   background: white;
@@ -697,15 +700,15 @@ ul, ol { list-style: none; }
 }
 .search-field::placeholder { color: var(--gray-400); font-size: 13.5px; }
 .search-go {
-  background: var(--yellow);
-  color: var(--yellow-text);
+  background: var(--navy);
+  color: #ffffff;
   width: 44px;
   height: 100%;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
   transition: background var(--t-fast);
 }
-.search-go:hover { background: var(--yellow-dark); }
+.search-go:hover { background: var(--navy-light); }
 .search-go svg { width: 18px; height: 18px; }
 
 /* Search suggestions */
@@ -771,7 +774,7 @@ ul, ol { list-style: none; }
   white-space: nowrap;
   cursor: pointer;
 }
-.h-act:hover { border-color: rgba(255,255,255,.35); }
+.h-act:hover { border-color: rgba(0,0,0,.12); }
 
 /* Cart button */
 .h-cart {
@@ -781,11 +784,11 @@ ul, ol { list-style: none; }
   padding: 4px 8px;
   border: 1.5px solid transparent;
   border-radius: var(--r-sm);
-  color: white;
+  color: var(--text-h);
   font-weight: var(--fw-bold);
   transition: border-color var(--t-fast);
 }
-.h-cart:hover { border-color: rgba(255,255,255,.35); }
+.h-cart:hover { border-color: rgba(0,0,0,.12); }
 
 /* icon + badge wrapper */
 .h-cart-icon-wrap {
@@ -814,7 +817,7 @@ ul, ol { list-style: none; }
 .h-cart-label {
   font-size: 13px;
   font-weight: var(--fw-bold);
-  color: white;
+  color: var(--text-h);
   line-height: 1;
   align-self: flex-end;
   padding-bottom: 2px;
@@ -827,12 +830,12 @@ ul, ol { list-style: none; }
   align-items: center;
   gap: 2px;
   padding: 6px;
-  color: white;
+  color: var(--text-h);
   border: 1.5px solid transparent;
   border-radius: var(--r-sm);
   font-size: 10px;
 }
-.h-hamburger:hover { border-color: rgba(255,255,255,.35); }
+.h-hamburger:hover { border-color: rgba(0,0,0,.12); }
 .h-hamburger svg { width: 22px; height: 22px; }
 
 /* ── 6. Nav Bar ─────────────────────────────────────────────── */
@@ -5443,6 +5446,10 @@ body[data-page="chip-programming"] .srv-grid {
     width: 168px;
     height: 44px;
   }
+  .logo-img {
+    height: 44px;
+    width: 128px;
+  }
   .header-search {
     order: 4;
     flex: 1 0 100%;
@@ -5566,6 +5573,10 @@ body[data-page="chip-programming"] .srv-grid {
   .logo svg {
     width: 150px;
     height: 40px;
+  }
+  .logo-img {
+    height: 40px;
+    width: 116px;
   }
   .search-cat-btn {
     width: 72px;

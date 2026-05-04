@@ -113,10 +113,7 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
 
       <!-- Logo -->
       <a href="index" class="logo" aria-label="Sinelec Tech — Home">
-        <svg width="200" height="52" viewBox="0 0 300 52" xmlns="http://www.w3.org/2000/svg">
-          <text x="150" y="28" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="800" letter-spacing="3" fill="white" text-anchor="middle" dominant-baseline="middle">SINELEC</text>
-          <path d="M30 46 C75 39, 115 39, 150 46 S215 53, 260 46 S300 39, 270 46" fill="none" stroke="#FFCC00" stroke-width="2.5" stroke-linecap="round"/>
-        </svg>
+        <img src="../assets/logo.png" alt="Sinelec Tech" class="logo-img">
       </a>
 
       <!-- Search -->
