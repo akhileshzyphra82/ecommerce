@@ -86,17 +86,22 @@ function ic(name, w = 18, h = 18) {
   return s.replace('<svg ', `<svg width="${w}" height="${h}" `);
 }
 
-/* ── Toast ───────────────────────────────────────────────────── */
-function toast(msg, type = 'ok') {
+/* ── Common Toast ────────────────────────────────────────────── */
+function showToastMessage(msg, type = 'ok') {
   const c = document.getElementById('toastWrap');
-  if (!c) return;
+  if (!c || !msg) return;
+  const allowedTypes = ['ok', 'warn', 'err'];
+  const normalizedType = allowedTypes.includes(type) ? type : 'ok';
   const t = document.createElement('div');
-  t.className = `toast ${type}`;
-  const icon = type === 'ok' ? SVG.check : type === 'err' ? SVG.x : ic('info', 16, 16);
+  t.className = `toast ${normalizedType}`;
+  const icon = normalizedType === 'ok' ? SVG.check : normalizedType === 'err' ? SVG.x : ic('info', 16, 16);
   t.innerHTML = `${icon}<span>${msg}</span>`;
   c.appendChild(t);
   setTimeout(() => t.remove(), 3500);
 }
+window.showToastMessage = showToastMessage;
+window.toast = showToastMessage;
+const toast = showToastMessage;
 
 /* ── Stars ───────────────────────────────────────────────────── */
 function stars(r, size = 13) {
@@ -1530,7 +1535,6 @@ function initAuthModal() {
   const switchBtns = Array.from(document.querySelectorAll('[data-auth-switch]'));
   const tabBtns = Array.from(document.querySelectorAll('.auth-switch-tab'));
   const signInForm = document.getElementById('authSignInForm');
-  const signUpForm = document.getElementById('authSignUpForm');
   const forgotBtn = document.getElementById('authForgotBtn');
   const passToggles = Array.from(document.querySelectorAll('[data-toggle-pass]'));
 
@@ -1593,26 +1597,6 @@ function initAuthModal() {
     closeAuth();
   });
 
-  signUpForm?.addEventListener('submit', e => {
-    e.preventDefault();
-    const first = document.getElementById('authFirstName')?.value.trim();
-    const last = document.getElementById('authLastName')?.value.trim();
-    const email = document.getElementById('authEmail')?.value.trim();
-    const phone = document.getElementById('authPhone')?.value.trim();
-    const pass = document.getElementById('authPassCreate')?.value;
-    const confirm = document.getElementById('authPassConfirm')?.value;
-    if (!first || !last || !email || !phone || !pass || !confirm) {
-      toast('Please fill all required fields.', 'warn');
-      return;
-    }
-    if (pass !== confirm) {
-      toast('Password and Confirm Password do not match.', 'warn');
-      return;
-    }
-    toast('Account created successfully.', 'ok');
-    closeAuth();
-  });
-
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal && !modal.hidden) closeAuth();
   });
@@ -1629,6 +1613,12 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCompareBar();
   initDeliveryLocationModal();
   initAuthModal();
+
+  if (window.FLASH_TOAST && window.FLASH_TOAST.message) {
+    const message = String(window.FLASH_TOAST.message || '').trim();
+    const type = String(window.FLASH_TOAST.type || 'ok').trim().toLowerCase();
+    if (message) showToastMessage(message, type);
+  }
 
   /* Search */
   const sf = document.getElementById('searchField');

@@ -550,6 +550,7 @@ ul, ol { list-style: none; }
   align-items: center;
   justify-content: center;
 }
+.auth-input-icon svg { color: #5f7592; stroke: currentColor; }
 .auth-pass-eye {
   position: absolute;
   right: 9px;
@@ -577,6 +578,23 @@ ul, ol { list-style: none; }
   border-color: #0f5ebf;
   box-shadow: 0 0 0 3px rgb(15 94 191 / .14);
 }
+.auth-phone-combo .auth-phone-code {
+  position: absolute;
+  left: 8px;
+  top: 4px;
+  bottom: 4px;
+  width: 74px;
+  border: 1px solid #cfdced;
+  border-radius: 8px;
+  background: #f7fbff;
+  color: #1f3552;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 8px;
+  outline: none;
+}
+.auth-phone-combo .auth-input-icon { left: 90px; }
+.auth-phone-combo .auth-phone-number { padding-left: 118px; }
 .auth-captcha {
   border: 1px solid #d5e2f1;
   border-radius: 10px;

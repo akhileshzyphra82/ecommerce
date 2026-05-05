@@ -1,25 +1,12 @@
 <?php
-/**
- * SINELEC TECH — Global Header
- * Expects calling page to set:
- *   $pageTitle   (string) — page <title>
- *   $currentPage (string) — one of: home, products, manufacturers, resources,
- *                           chip-programming, new-arrivals, request-a-quote,
- *                           about, contact, product
- *   $storeData   (array)  — from data/store_data.php
- */
-// ini_set('display_errors', 1);
-// error_reporting(E_ALL);
-// require_once __DIR__ . '/../controller/website_controller.php';
 
-// $objWebsiteController = new WebsiteController();
+require_once __DIR__ . '/../common/functions.php';
+$paramsArray = GetQueryStringParameters();
+(isset($paramsArray['action']))? $action=$paramsArray['action'] : $action="";
+isset($paramsArray["msg"]) ? $msg=$paramsArray["msg"] : $msg="";
+isset($paramsArray["type"]) ? $toastType=$paramsArray["type"] : $toastType="ok";
 
-// $arrActivity=$objWebsiteController->getActivity();
 
-// echo '<pre>';
-// print_r($arrActivity);
-// echo '</pre>';
-// die;
 $currentPage = $currentPage ?? 'home';
 $pageTitle   ='Sinelec Technologies : Electronic Module and Component Distributor & Expert chip programming services';
 
@@ -96,6 +83,10 @@ $productMegaMenu = [
 <script>
 window.STORE_DATA   = <?= json_encode($storeData ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
 window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
+window.FLASH_TOAST  = {
+  message: <?= json_encode($msg ?? '', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
+  type: <?= json_encode($toastType ?? 'ok', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
+};
 </script>
 </head>
 <body data-page="<?= htmlspecialchars($currentPage) ?>">
@@ -481,80 +472,89 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
     </div>
 
     <div class="auth-panel auth-panel-signup" id="authSignUpPanel">
-      <form id="authSignUpForm" class="auth-form" novalidate>
-        <div class="auth-two-col">
+      <form id="authSignUpForm" class="auth-form" method="POST" action="service?urlstring=<?= EncryptURL('action=Insert') ?>">
           <label class="auth-field">
-            <span>First Name</span>
-            <input type="text" id="authFirstName" required>
+            <span>Full Name</span>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="authFullName" name="authFullName" required>
+            </div>
           </label>
+ 
           <label class="auth-field">
-            <span>Last Name</span>
-            <input type="text" id="authLastName" required>
+            <span>Email ID</span>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l8 6 8-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
+              </span>
+              <input type="email" id="authEmail" name="authEmail" required>
+            </div>
           </label>
-        </div>
 
-        <label class="auth-field">
-          <span>Email ID</span>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l8 6 8-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
-            </span>
-            <input type="email" id="authEmail" required>
-          </div>
-        </label>
 
-        <label class="auth-field">
-          <span>Number</span>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.8.3 1.5.6 2.3a2 2 0 0 1-.5 2.1L8 9a16 16 0 0 0 7 7l.9-.9a2 2 0 0 1 2.1-.5c.8.3 1.5.5 2.3.6A2 2 0 0 1 22 16.9z"/></svg>
-            </span>
-            <input type="tel" id="authPhone" required>
-          </div>
-        </label>
+          <label class="auth-field">
+            <span>Mobile Number</span>
+            <div class="auth-input-wrap auth-phone-combo">
+              <select name="phone_code" id="phone_code" class="auth-phone-code" required>
+                <option value="49" selected>+49</option>
+                <option value="91">+91</option>
+                <option value="1">+1</option>
+                <option value="44">+44</option>
+                <option value="33">+33</option>
+                <option value="39">+39</option>
+                <option value="34">+34</option>
+                <option value="31">+31</option>
+              </select>
+              <span class="auth-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2 4.2 2 2 0 0 1 4 2h3a2 2 0 0 1 2 1.7c.1.8.3 1.5.6 2.3a2 2 0 0 1-.5 2.1L8 9a16 16 0 0 0 7 7l.9-.9a2 2 0 0 1 2.1-.5c.8.3 1.5.5 2.3.6A2 2 0 0 1 22 16.9z"/></svg>
+              </span>
+              <input type="tel" id="authPhone" name="authPhone" class="auth-phone-number" inputmode="numeric" required>
+            </div>
+          </label>
 
-        <label class="auth-field">
-          <span>Password</span>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
-            </span>
-            <input type="password" id="authPassCreate" required>
-            <button type="button" class="auth-pass-eye" data-toggle-pass data-pass-target="authPassCreate" aria-label="Show password" title="Show password">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </label>
+          <label class="auth-field">
+            <span>Password</span>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
+              </span>
+              <input type="password" id="authPassCreate" name="authPassCreate" pattern="^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$" title="Minimum 8 characters with letters, numbers, and special character." required>
+              <button type="button" class="auth-pass-eye" data-toggle-pass data-pass-target="authPassCreate" aria-label="Show password" title="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </label>
 
-        <label class="auth-field">
-          <span>Confirm Password</span>
-          <div class="auth-input-wrap">
-            <span class="auth-input-icon">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
-            </span>
-            <input type="password" id="authPassConfirm" required>
-            <button type="button" class="auth-pass-eye" data-toggle-pass data-pass-target="authPassConfirm" aria-label="Show password" title="Show password">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
-          </div>
-        </label>
+          <label class="auth-field">
+            <span>Confirm Password</span>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
+              </span>
+              <input type="password" id="authPassConfirm" name="authPassConfirm" minlength="8" required>
+              <button type="button" class="auth-pass-eye" data-toggle-pass data-pass-target="authPassConfirm" aria-label="Show password" title="Show password">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </label>
 
-        <div class="auth-captcha auth-captcha-cloud">
-          <div class="auth-captcha-left">
-            <span class="auth-captcha-ok">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
-            </span>
-            <span>Success!</span>
+          <div class="auth-captcha auth-captcha-cloud">
+            <div class="auth-captcha-left">
+              <span class="auth-captcha-ok">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
+              </span>
+              <span>Success!</span>
+            </div>
+            <div class="auth-captcha-brand">
+              <strong>CLOUDFLARE</strong>
+              <span>Privacy · Help</span>
+            </div>
           </div>
-          <div class="auth-captcha-brand">
-            <strong>CLOUDFLARE</strong>
-            <span>Privacy · Help</span>
-          </div>
-        </div>
 
         <button type="submit" class="auth-primary-btn">Create Account</button>
       </form>
-
       <div class="auth-sep"><span>or</span></div>
       <button type="button" class="auth-google-btn">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
@@ -573,5 +573,6 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
 
       <p class="auth-terms">By continuing, you agree to our <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</p>
     </div>
+
   </div>
 </div>
