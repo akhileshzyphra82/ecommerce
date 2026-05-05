@@ -177,16 +177,10 @@ require_once 'header.php';
 <div class="deals-bar">
   <div class="wrap">
     <div class="deals-bar-inner">
-      <a class="deal-tab active" href="#flash-sales-section">Flash Sales</a>
-      <a class="deal-tab" href="#best-seller-section">Best Seller</a>
-      <a class="deal-tab" href="#popular-section">Popular</a>
-      <a class="deal-tab" href="#new-arrival-section">New arrival</a>
-      <a href="https://wa.me/919876543210" class="deal-whatsapp-cta" target="_blank" rel="noopener" aria-label="Get instant quotes on WhatsApp">
-        <span class="deal-whatsapp-icon" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        </span>
-        <span class="deal-whatsapp-text">Get instant quotes on WhatsApp</span>
-      </a>
+      <a class="deal-tab" href="#new-arrival-section">New Products</a>
+      <a class="deal-tab" href="#best-seller-section">Featured Manufacture</a>
+      <a class="deal-tab" href="#popular-section">Service & Tools</a>
+      
     </div>
   </div>
 </div>
@@ -195,35 +189,37 @@ require_once 'header.php';
 <!-- ── Main Content ────────────────────────────────────────── -->
 <div class="wrap page-wrap">
 
-  <!-- Flash Sales -->
-  <div class="home-section-wrap" id="flash-sales-section">
+ 
+ <!-- New arrival -->
+  <div class="home-section-wrap" id="new-arrival-section">
     <div class="sec-head">
       <div>
-        <div class="sec-title">Flash Sales</div>
-        <div class="sec-subtitle">Limited-time offers with the highest savings.</div>
+        <div class="sec-title">New Products</div>
+        <div class="sec-subtitle">Explore the latest additions across semiconductors, modules, and production-ready components.</div>
       </div>
       <div class="carousel-nav-btns">
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('flashDealsTrack', 1)">
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('newArrivalsTrack', 1)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
         </button>
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('flashDealsTrack', -1)">
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('newArrivalsTrack', -1)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </div>
     <div class="prod-carousel">
       <div class="prod-carousel-track-wrap">
-        <div class="prod-carousel-track" id="flashDealsTrack"></div>
+        <div class="prod-carousel-track" id="newArrivalsTrack"></div>
       </div>
     </div>
+    
   </div>
 
   <!-- Best Seller -->
   <div class="home-section-wrap" id="best-seller-section">
     <div class="sec-head">
       <div>
-        <div class="sec-title">Best Seller</div>
-        <div class="sec-subtitle">Most purchased components trusted by repeat buyers.</div>
+        <div class="sec-title">Featured Manufacture</div>
+        <div class="sec-subtitle">Discover high-demand components from trusted global semiconductor manufacturers.</div>
       </div>
       <div class="carousel-nav-btns">
         <button class="car-btn car-btn-inline" onclick="carouselScroll('bestsellerTrack', 1)">
@@ -245,8 +241,8 @@ require_once 'header.php';
   <div class="home-section-wrap" id="popular-section">
     <div class="sec-head">
       <div>
-        <div class="sec-title">Popular</div>
-        <div class="sec-subtitle">Top-rated and frequently viewed products.</div>
+        <div class="sec-title">Service &amp; Tools</div>
+        <div class="sec-subtitle">Browse production support components and engineering-led tools used in embedded development workflows.</div>
       </div>
       <div class="carousel-nav-btns">
         <button class="car-btn car-btn-inline" onclick="carouselScroll('featuredTrack', 1)">
@@ -264,37 +260,12 @@ require_once 'header.php';
     </div>
   </div>
 
-  <!-- New arrival -->
-  <div class="home-section-wrap" id="new-arrival-section">
-    <div class="sec-head">
-      <div>
-        <div class="sec-title">New arrival</div>
-        <div class="sec-subtitle">Recently added products, now available in stock.</div>
-      </div>
-      <div class="carousel-nav-btns">
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('newArrivalsTrack', 1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-        </button>
-        <button class="car-btn car-btn-inline" onclick="carouselScroll('newArrivalsTrack', -1)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="prod-carousel">
-      <div class="prod-carousel-track-wrap">
-        <div class="prod-carousel-track" id="newArrivalsTrack"></div>
-      </div>
-    </div>
-  </div>
+ 
 
   <!-- Trust Badges -->
   <div class="trust-badges">
     <div class="trust-badges-grid">
-      <div>
-        <div class="trust-badge-icon">🚚</div>
-        <div class="trust-badge-title">Free Delivery</div>
-        <div class="trust-badge-sub">On orders ₹5,000+</div>
-      </div>
+     
       <div>
         <div class="trust-badge-icon">✅</div>
         <div class="trust-badge-title">100% Genuine</div>
@@ -327,47 +298,7 @@ require_once 'header.php';
     </div>
   </div>
 
-  <!-- Testimonials -->
-  <div class="home-section-wrap">
-    <div class="testimonials-hd">
-      <div>
-        <div class="sec-title">Customer Reviews</div>
-        <div class="sec-subtitle">What our 50,000+ customers say about us</div>
-      </div>
-      <div class="rating-summary-box">
-        <div class="rating-summary-num">4.8</div>
-        <div class="rating-summary-stars">★★★★★</div>
-        <div class="rating-summary-count">50K+ ratings</div>
-      </div>
-    </div>
-    <div class="testimonials-grid">
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Ordered STM32 chips and got them programmed with our custom firmware. Fast service, 100% genuine parts. Will order again!"</p>
-        <div class="testimonial-author">Rajesh Kumar</div>
-        <div class="testimonial-company">RK Electronics, Delhi · Verified Purchase</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"Excellent product quality and fast shipping. The chip programming service saved us 3 days of work. Highly recommended!"</p>
-        <div class="testimonial-author">Priya Sharma</div>
-        <div class="testimonial-company">TechMakers Lab, Bangalore · Verified Purchase</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★☆</div>
-        <p class="testimonial-text">"Great range of components at competitive prices. Customer support is very helpful. My go-to store for all electronics."</p>
-        <div class="testimonial-author">Mohammed Ali</div>
-        <div class="testimonial-company">Robo Innovations, Hyderabad · Verified Purchase</div>
-      </div>
-      <div class="testimonial-card">
-        <div class="testimonial-stars">★★★★★</div>
-        <p class="testimonial-text">"We buy all our Arduino and ESP32 modules from Sinelec. Best prices, fastest delivery in India. 5 stars!"</p>
-        <div class="testimonial-author">Anita Patel</div>
-        <div class="testimonial-company">EduBot, Ahmedabad · Verified Purchase</div>
-      </div>
-    </div>
-  </div>
-
+ 
   <!-- Newsletter -->
   <div class="newsletter-section">
     <div>

@@ -13,14 +13,9 @@
       <!-- Brand -->
       <div>
         <div class="footer-logo-wrap">
-          <svg width="160" height="42" viewBox="0 0 460 120" xmlns="http://www.w3.org/2000/svg" aria-label="Sinelec Tech">
-            <g transform="translate(20 28)">
-              <rect x="0" y="0" width="64" height="64" rx="14" fill="none" stroke="white" stroke-width="2.5"/>
-              <text x="12" y="42" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="800" letter-spacing="1" fill="white">ST</text>
-              <path d="M6 52 C14 44, 22 44, 30 52 S46 60, 54 52" fill="none" stroke="#FFCC00" stroke-width="2.5" stroke-linecap="round"/>
-            </g>
-            <text x="110" y="70" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="800" letter-spacing="3" fill="white">SINELEC</text>
-          </svg>
+          <a href="index" class="footer-logo-link" aria-label="Sinelec Tech — Home">
+            <img src="../assets/logo.png" alt="Sinelec Tech" class="footer-logo-img">
+          </a>
         </div>
         <p class="footer-brand-desc">India's trusted semiconductor &amp; electronic component store. Genuine parts, fast shipping, and expert chip programming services since 2015.</p>
         <div class="footer-contact-list">
@@ -70,30 +65,9 @@
         <ul class="footer-links">
           <li><a href="about#contact" class="footer-link">Contact us</a></li>
           <li><a href="request-a-quote" class="footer-link">Request Quote</a></li>
-          <li><a href="#" class="footer-link">Shipping &amp; Payment</a></li>
+          <li><a href="shipping-payment-term" class="footer-link">Shipping &amp; Payment</a></li>
           <li><a href="#" class="footer-link">Returns Policy</a></li>
           <li><a href="resources" class="footer-link">FAQ</a></li>
-        </ul>
-      </div>
-
-      <!-- Our Services -->
-      <div>
-        <div class="footer-col-title">Our Services</div>
-        <ul class="footer-links">
-          <li><a href="chip-programming" class="footer-link">Engineering Services</a></li>
-          <li><a href="chip-programming" class="footer-link">Manufacturing Services</a></li>
-          <li><a href="manufacturers" class="footer-link">Distribution Services</a></li>
-          <li><a href="about#contact" class="footer-link">After-Sale Services</a></li>
-        </ul>
-      </div>
-
-      <!-- Manufacturing -->
-      <div>
-        <div class="footer-col-title">Manufacturing</div>
-        <ul class="footer-links">
-          <li><a href="chip-programming" class="footer-link">Electronic Manufacturing</a></li>
-          <li><a href="chip-programming" class="footer-link">Testing and Programming</a></li>
-          <li><a href="chip-programming" class="footer-link">Quality Control</a></li>
         </ul>
       </div>
 

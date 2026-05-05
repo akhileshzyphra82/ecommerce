@@ -31,26 +31,24 @@
   justify-content: center;
   border: none;
   border-radius: 50%;
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255,255,255,.18) 0, rgba(255,255,255,.06) 16%, rgba(255,255,255,0) 30%),
-    linear-gradient(135deg, #131a2e 0%, #153a73 58%, #1c5ed7 100%);
-  color: #fff;
+  background: linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+  color: #0a1a30;
   box-shadow:
-    0 18px 36px rgba(7, 16, 33, 0.34),
-    inset 0 1px 0 rgba(255,255,255,.1),
-    inset 0 -12px 18px rgba(0, 0, 0, .22);
+    0 18px 36px rgba(12, 44, 86, 0.18),
+    inset 0 1px 0 rgba(255,255,255,.72);
   cursor: pointer;
   overflow: visible;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease, filter 0.22s ease;
+  border: 1px solid #cfe0f3;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, opacity 0.22s ease, filter 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
 }
 
 .sinela-chatbot-fab:hover {
   transform: translateY(-2px);
-  box-shadow:
-    0 24px 44px rgba(7, 16, 33, 0.42),
-    inset 0 1px 0 rgba(255,255,255,.12),
-    inset 0 -12px 18px rgba(0, 0, 0, .24);
-  filter: saturate(1.08);
+  background: #e7f1ff;
+  border-color: #bcd5f4;
+  color: #0a1a30;
+  box-shadow: 0 24px 44px rgba(12, 44, 86, 0.2);
+  filter: none;
 }
 
 .sinela-chatbot-fab:focus-visible,
@@ -80,11 +78,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(255,255,255,.12), rgba(255,255,255,0) 60%),
-    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,0));
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
-  color: #fff;
+  background: transparent;
+  box-shadow: none;
+  color: currentColor;
   transform-origin: 50% 60%;
   animation: sinelaFabFloat 3s ease-in-out infinite;
 }
@@ -93,7 +89,7 @@
   display: block;
   width: 40px;
   height: 40px;
-  filter: drop-shadow(0 2px 8px rgba(255,255,255,.06));
+  filter: none;
 }
 
 .sinela-chatbot-window {
@@ -401,16 +397,21 @@
   width: 46px;
   height: 46px;
   padding: 0;
-  border: none;
+  border: 1px solid #cfe0f3;
   border-radius: 15px;
-  background: linear-gradient(135deg, #ffcc00, #ffb300);
-  color: #fff;
+  background: linear-gradient(180deg, #f7fbff 0%, #eef5ff 100%);
+  color: #0a1a30;
   cursor: pointer;
-  box-shadow: 0 12px 20px rgba(255, 191, 0, 0.22);
+  box-shadow: 0 12px 20px rgba(12, 44, 86, 0.12);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
+}
+.sinela-chatbot-send:hover {
+  background: #e7f1ff;
+  border-color: #bcd5f4;
+  color: #0a1a30;
 }
 
 .sinela-chatbot-send svg {

@@ -178,15 +178,9 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
     <div class="wrap">
       <div class="nav-inner">
 
-        <!-- Home -->
-        <a href="index" class="<?= navClass('home', $currentPage) ?> nav-deals">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Home
-        </a>
-
         <!-- Products mega menu -->
         <div class="nav-item" id="productsNavItem">
-          <a href="products" class="nav-link nav-link-drop <?= in_array($currentPage, ['products', 'new-arrivals']) ? 'active' : '' ?>"
+          <a href="products" class="nav-link nav-link-drop <?= in_array($currentPage, ['products', 'product', 'new-arrivals']) ? 'active' : '' ?>"
              onclick="toggleProductsMenu(event)">
             Products
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -276,6 +270,14 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
           </a>
           <div class="mega-menu mega-simple">
             <div class="mega-simple-title">Resources</div>
+
+            <a href="chip-programming" class="mega-simple-link">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+               Chip Programming
+               <span class="nav-badge">New</span>
+            </a>
+
+
             <a href="resources#learning" class="mega-simple-link">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
               Learning Material
@@ -295,18 +297,11 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
           </div>
         </div>
 
-        <!-- Chip Programming -->
-        <a href="chip-programming" class="<?= navClass('chip-programming', $currentPage) ?>">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 7l5 5-5 5M7 7l-5 5 5 5M14 3l-4 18"/></svg>
-          Chip Programming
-          <span class="nav-badge">New</span>
-        </a>
-
         <!-- Request a Quote -->
         <a href="request-a-quote" class="<?= navClass('request-a-quote', $currentPage) ?>">Request a Quote</a>
 
         <!-- About Sinelec -->
-        <a href="about" class="<?= navClass('about', $currentPage) ?>">About Sinelec</a>
+        <a href="about" class="<?= navClass('about', $currentPage) ?>">E-Shop</a>
 
       </div>
     </div>
@@ -331,7 +326,7 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
         Home
       </a>
-      <a href="products" class="mob-link <?= $currentPage === 'products' ? 'on' : '' ?>">
+      <a href="products" class="mob-link <?= in_array($currentPage, ['products', 'product']) ? 'on' : '' ?>">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         All Products
       </a>
@@ -385,8 +380,10 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
     <p class="delivery-modal-subtitle">Set where you want orders to be delivered for accurate stock and shipping estimates.</p>
 
     <div class="delivery-modal-block">
-      <div class="delivery-modal-label">Choose your current location</div>
-      <button type="button" class="delivery-modal-btn" id="useCurrentLocBtn">Use Current Location</button>
+      <div class="delivery-modal-inline">
+        <div class="delivery-modal-label">Choose your current location</div>
+        <button type="button" class="delivery-modal-btn" id="useCurrentLocBtn">Use Current Location</button>
+      </div>
     </div>
 
     <div class="delivery-modal-or">Or</div>
@@ -401,46 +398,15 @@ window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
 
     <div class="delivery-modal-or">Or</div>
 
-    <div class="delivery-modal-block">
-      <div class="delivery-modal-label">Select existing address</div>
-      <div class="delivery-address-list" id="deliveryAddressList">
-        <label class="delivery-address-item">
-          <input type="radio" name="deliveryAddress" value="Suite 3, Floor 8, Bldg. 3, Mindspace SEZ, Airoli, Navi Mumbai, Maharashtra 400708">
-          <span class="delivery-address-main">Suite 3, Floor 8, Bldg. 3, Mindspace SEZ, Airoli, Navi Mumbai, Maharashtra 400708</span>
-          <span class="delivery-address-actions">
-            <button type="button" class="delivery-address-action" data-address-action="edit" aria-label="Edit address" title="Edit address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-            </button>
-            <button type="button" class="delivery-address-action delivery-address-action--del" data-address-action="delete" aria-label="Delete address" title="Delete address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            </button>
-          </span>
-        </label>
-        <label class="delivery-address-item">
-          <input type="radio" name="deliveryAddress" value="Office 12B, 4th Floor, Plot 9, Connaught Place, New Delhi 110001">
-          <span class="delivery-address-main">Office 12B, 4th Floor, Plot 9, Connaught Place, New Delhi 110001</span>
-          <span class="delivery-address-actions">
-            <button type="button" class="delivery-address-action" data-address-action="edit" aria-label="Edit address" title="Edit address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-            </button>
-            <button type="button" class="delivery-address-action delivery-address-action--del" data-address-action="delete" aria-label="Delete address" title="Delete address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            </button>
-          </span>
-        </label>
-        <label class="delivery-address-item">
-          <input type="radio" name="deliveryAddress" value="Brachvogelweg 9, 85375 Neufahrn, Germany">
-          <span class="delivery-address-main">Brachvogelweg 9, 85375 Neufahrn, Germany</span>
-          <span class="delivery-address-actions">
-            <button type="button" class="delivery-address-action" data-address-action="edit" aria-label="Edit address" title="Edit address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
-            </button>
-            <button type="button" class="delivery-address-action delivery-address-action--del" data-address-action="delete" aria-label="Delete address" title="Delete address">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
-            </button>
-          </span>
-        </label>
-      </div>
+    <div class="delivery-modal-block delivery-modal-block--info">
+      <div class="delivery-modal-label">Shipping and payment term for your location</div>
+      <a href="shipping-payment-term" class="delivery-info-link">
+        <span class="delivery-info-link-copy">
+          <strong>Click here</strong>
+          <small>Review delivery timelines, VAT guidance, accepted payment methods, and region-wise shipping costs.</small>
+        </span>
+        <span class="delivery-info-link-icon" aria-hidden="true">→</span>
+      </a>
     </div>
   </div>
 </div>

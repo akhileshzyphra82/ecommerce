@@ -490,7 +490,7 @@ function addRecentlyViewed(id) {
 }
 
 /* ── Product card renderer ───────────────────────────────────── */
-function pCard(p, listView = false, sponsored = false) {
+function pCard(p, listView = false, sponsored = false, variant = 'default') {
   const price = p.priceBreaks ? p.priceBreaks[0].price : (p.price || 0);
   const si    = p.stock > 100 ? 'in-stock' : p.stock > 0 ? 'low-stock' : 'out-stock';
   const siLbl = p.stock > 100 ? 'In Stock' : p.stock > 0 ? `Only ${p.stock} left` : 'Unavailable';
@@ -511,9 +511,10 @@ function pCard(p, listView = false, sponsored = false) {
   const eurLowBreak = p.priceBreaks?.length > 1
     ? EUR_FORMAT.format(p.priceBreaks[p.priceBreaks.length - 1].price * EUR_RATE)
     : '';
+  const isDetailOnly = variant === 'detail-link';
 
   return `
-  <div class="pcard${listView ? ' list-v' : ''}" data-id="${p.id}">
+  <div class="pcard${listView ? ' list-v' : ''}${isDetailOnly ? ' pcard-detail-link' : ''}" data-id="${p.id}">
     <div class="pcard-img-wrap" onclick="openPDP(${p.id})" style="cursor:pointer">
       <img class="pcard-img" src="${p.image}" alt="${p.name}" loading="lazy"
            onerror="this.src='https://placehold.co/300x300/EBF3FF/0066CC?text=${encodeURIComponent(p.sku)}'">
@@ -544,13 +545,17 @@ function pCard(p, listView = false, sponsored = false) {
       <div class="pcard-stock ${si}">${siLbl}</div>
       <div class="pcard-delivery">${ic('truck', 11, 11)} FREE delivery by <strong>${delivEst()}</strong></div>
     </div>
-    <div class="pcard-footer">
+    <div class="pcard-footer${isDetailOnly ? ' pcard-footer--single' : ''}">
+      ${isDetailOnly ? `
+      <button class="btn-view-detail" onclick="event.stopPropagation();openPDP(${p.id})">
+        Click Here
+      </button>` : `
       <button class="btn-atc" onclick="atcClick(event,${p.id})">
         ${ic('cart', 14, 14)} Add to Cart
       </button>
       <button class="btn-buynow" onclick="event.stopPropagation();atcClick(event,${p.id});openCart()">
         Buy Now
-      </button>
+      </button>`}
     </div>
   </div>`;
 }
@@ -1050,10 +1055,10 @@ function renderHomeCategories() {
     </a>`).join('');
 }
 
-function renderFeaturedCarousel(elId, products) {
+function renderFeaturedCarousel(elId, products, variant = 'default') {
   const el = document.getElementById(elId);
   if (!el) return;
-  el.innerHTML = products.map(p => pCard(p)).join('');
+  el.innerHTML = products.map(p => pCard(p, false, false, variant)).join('');
 }
 
 function renderFlashDeals() {
@@ -1678,13 +1683,17 @@ document.addEventListener('DOMContentLoaded', () => {
           .filter(p => p.badge === 'bestseller' || Number(p.reviews || 0) >= 600)
           .slice(0, 14);
         const newArrivalProducts = STORE_DATA.products
-          .filter(p => p.isNew)
-          .slice(0, 14);
+          .slice()
+          .sort((a, b) => {
+            if ((b.isNew ? 1 : 0) !== (a.isNew ? 1 : 0)) return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
+            return Number(b.id || 0) - Number(a.id || 0);
+          })
+          .slice(0, 20);
 
         renderFeaturedCarousel('flashDealsTrack', flashDealProducts.length ? flashDealProducts : STORE_DATA.products.slice(0, 14));
         renderFeaturedCarousel('featuredTrack', featuredProducts.length ? featuredProducts : STORE_DATA.products.slice(0, 14));
         renderFeaturedCarousel('bestsellerTrack', bestSellerProducts.length ? bestSellerProducts : STORE_DATA.products.slice(0, 14));
-        renderFeaturedCarousel('newArrivalsTrack', newArrivalProducts.length ? newArrivalProducts : STORE_DATA.products.slice(0, 14));
+        renderFeaturedCarousel('newArrivalsTrack', newArrivalProducts.length ? newArrivalProducts : STORE_DATA.products.slice(0, 20), 'detail-link');
       }
 
       {
