@@ -5,6 +5,7 @@
 /* ── Data bridge (PHP → JS) ──────────────────────────────────── */
 const STORE_DATA    = window.STORE_DATA    || { categories:[], manufacturers:[], products:[], services:[], testimonials:[], banners:[] };
 const CURRENT_PAGE  = window.CURRENT_PAGE  || 'home';
+const AUTH_STATE    = window.SINELEC_AUTH  || { isSignedIn:false };
 const CATALOG_INIT  = window.CATALOG_INIT  || { cat:'', mfr:'', q:'', subcat:'', isNew:false };
 const CURRENT_PRODUCT = window.CURRENT_PRODUCT || null;
 const EUR_RATE = 0.0093;
@@ -23,6 +24,10 @@ const PAGE_MAP = {
   'request-a-quote': 'request-a-quote',
   checkout:        'checkout',
   about:           'about',
+  profile:         'profile',
+  'my-orders':     'my-orders',
+  'delivery-address': 'delivery-address',
+  'change-password': 'change-password',
   contact:         'about#contact',
   quote:           'request-a-quote',
   services:        'chip-programming',
@@ -87,19 +92,60 @@ function ic(name, w = 18, h = 18) {
 }
 
 /* ── Common Toast ────────────────────────────────────────────── */
-function showToastMessage(msg, type = 'ok') {
+function showToastMessage(msg, status = 'pass') {
   const c = document.getElementById('toastWrap');
   if (!c || !msg) return;
-  const allowedTypes = ['ok', 'warn', 'err'];
-  const normalizedType = allowedTypes.includes(type) ? type : 'ok';
+  const normalizedStatus = String(status || 'pass').trim().toLowerCase();
+  const statusMap = {
+    ok: 'pass',
+    pass: 'pass',
+    success: 'pass',
+    err: 'fail',
+    error: 'fail',
+    fail: 'fail',
+    warning: 'warn',
+    warn: 'warn',
+  };
+  const tone = statusMap[normalizedStatus] || 'pass';
   const t = document.createElement('div');
-  t.className = `toast ${normalizedType}`;
-  const icon = normalizedType === 'ok' ? SVG.check : normalizedType === 'err' ? SVG.x : ic('info', 16, 16);
-  t.innerHTML = `${icon}<span>${msg}</span>`;
+  t.className = `toast toast--${tone}`;
+  t.setAttribute('role', 'status');
+  t.setAttribute('aria-live', 'polite');
+
+  const icon = tone === 'pass'
+    ? SVG.check
+    : tone === 'fail'
+      ? SVG.x
+      : ic('info', 16, 16);
+
+  t.innerHTML = `
+    <span class="toast-icon" aria-hidden="true">${icon}</span>
+    <span class="toast-text">${msg}</span>
+    <button type="button" class="toast-close" aria-label="Close notification">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  `;
+
+  let hideTimer = null;
+  const removeToast = () => {
+    if (!t.parentNode) return;
+    t.classList.add('is-leaving');
+    window.setTimeout(() => t.remove(), 220);
+  };
+
+  t.querySelector('.toast-close')?.addEventListener('click', removeToast);
   c.appendChild(t);
-  setTimeout(() => t.remove(), 3500);
+  hideTimer = window.setTimeout(removeToast, 5000);
+  t.addEventListener('mouseenter', () => window.clearTimeout(hideTimer));
+  t.addEventListener('mouseleave', () => {
+    hideTimer = window.setTimeout(removeToast, 1800);
+  });
 }
 window.showToastMessage = showToastMessage;
+window.showAppToast = showToastMessage;
 window.toast = showToastMessage;
 const toast = showToastMessage;
 
@@ -1562,13 +1608,15 @@ function initAuthModal() {
     document.body.style.overflow = '';
   }
 
-  trigger.addEventListener('click', () => openAuth('signin'));
-  trigger.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      openAuth('signin');
-    }
-  });
+  if (!AUTH_STATE.isSignedIn) {
+    trigger.addEventListener('click', () => openAuth('signin'));
+    trigger.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openAuth('signin');
+      }
+    });
+  }
   closeEls.forEach(el => el.addEventListener('click', closeAuth));
   switchBtns.forEach(btn => btn.addEventListener('click', () => switchAuth(btn.dataset.authSwitch || 'signin')));
 
@@ -1586,19 +1634,64 @@ function initAuthModal() {
   });
 
   signInForm?.addEventListener('submit', e => {
-    e.preventDefault();
     const user = document.getElementById('authUserId')?.value.trim();
     const pass = document.getElementById('authPassword')?.value;
     if (!user || !pass) {
-      toast('Please enter User ID and Password.', 'warn');
-      return;
+      e.preventDefault();
+      toast('Please enter your email and password.', 'warn');
     }
-    toast('Signed in successfully.', 'ok');
-    closeAuth();
   });
 
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && modal && !modal.hidden) closeAuth();
+  });
+}
+
+function initAccountMenu() {
+  if (!AUTH_STATE.isSignedIn) return;
+
+  const trigger = document.getElementById('headerAccountBtn');
+  const menu = document.getElementById('accountMenu');
+  if (!trigger || !menu) return;
+
+  function openMenu() {
+    menu.hidden = false;
+    trigger.setAttribute('aria-expanded', 'true');
+  }
+
+  function closeMenu() {
+    menu.hidden = true;
+    trigger.setAttribute('aria-expanded', 'false');
+  }
+
+  function toggleMenu() {
+    if (menu.hidden) openMenu();
+    else closeMenu();
+  }
+
+  trigger.addEventListener('click', e => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  trigger.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleMenu();
+    } else if (e.key === 'Escape') {
+      closeMenu();
+    }
+  });
+
+  menu.addEventListener('click', e => e.stopPropagation());
+  document.addEventListener('click', e => {
+    if (!menu.hidden && !e.target.closest('.header-account-wrap')) {
+      closeMenu();
+    }
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !menu.hidden) closeMenu();
   });
 }
 
@@ -1613,6 +1706,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderCompareBar();
   initDeliveryLocationModal();
   initAuthModal();
+  initAccountMenu();
 
   if (window.FLASH_TOAST && window.FLASH_TOAST.message) {
     const message = String(window.FLASH_TOAST.message || '').trim();

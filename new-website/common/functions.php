@@ -521,6 +521,7 @@ function exportIntoExcelSinglePage($dataList, $filename)// in this function we s
 	header("Expires: 0");
 	print $dataList;
 }
+
 function GetQueryStringParameters()
 {
 	$paramArray = array();
@@ -531,7 +532,10 @@ function GetQueryStringParameters()
 		$paramArray = array();
 		foreach($params as $param)
 		{
-			list($key, $value) = explode('=',$param);
+			if ($param === '' || strpos($param, '=') === false) {
+				continue;
+			}
+			list($key, $value) = explode('=',$param, 2);
 			$paramArray[$key] = $value;
 		}
 	}

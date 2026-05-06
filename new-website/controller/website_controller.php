@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/../config/db_helper.php';
-require_once __DIR__ . '/CryptedPassword.inc.php';
 class WebsiteController
 {
     private $dbHelper;
@@ -8,20 +7,6 @@ class WebsiteController
     public function __construct() {
         $this->dbHelper = new MySQLDB();
     }
-
-
-    private function Encrypt($strData)
-	{
-		$objEncryptManager = new CryptedPassword();
-		return $objEncryptManager->LinEncrypt($strData);
-	}
-	
-	private function Decrypt($strData)
-	{
-		$objEncryptManager = new CryptedPassword();
-		return $objEncryptManager->LinDecrypt($strData);
-	}
-
 
 
     public function InsertUserFromWebsite($arrUserData)
@@ -32,6 +17,12 @@ class WebsiteController
                 $strMobileNum = addslashes(trim($arrUserData['communication_mobile_num']));
                 $strEmail = addslashes(trim($arrUserData['communication_email_id']));
                 $strPassword = trim($arrUserData['erp_password']);
+                $passwordHash = password_hash($strPassword, PASSWORD_DEFAULT);
+
+                if ($passwordHash === false)
+                {
+                    throw new Exception('Password hashing failed.');
+                }
 
                 $strQuery = "INSERT INTO tbl_user (
                 user_type_id,
@@ -51,7 +42,7 @@ class WebsiteController
                 ".$arrUserData['communication_mobile_num_isd']." ,
                 '".$strMobileNum."',
                 '".$strEmail."',
-                '".$this->Encrypt($strPassword)."',
+                '".addslashes($passwordHash)."',
                 NULL,
                 NULL,
                 '1',
@@ -76,6 +67,7 @@ class WebsiteController
         }
 	}
 
+
     public function isEmailRegistered($strEmailId)
     {
         try
@@ -96,9 +88,38 @@ class WebsiteController
     public function loginUser($postData) 
     {
         try {
-            $query = "SELECT * FROM tbl_user WHERE communication_email_id='".$postData['username']."' AND erp_password='".$this->Encrypt($postData['password'])."'"; 
+            $username = addslashes(strtolower(trim($postData['username'] ?? '')));
+            $password = (string)($postData['password'] ?? '');
+
+            if ($username === '' || $password === '') {
+                return [];
+            }
+
+            $query = "SELECT * FROM tbl_user WHERE communication_email_id='".$username."' LIMIT 1"; 
             $arrUserData = $this->dbHelper->select($query);
-            return $arrUserData;
+
+            if (empty($arrUserData)) {
+                return [];
+            }
+
+            $user = $arrUserData[0];
+            $storedHash = (string)($user->ERP_PASSWORD ?? '');
+
+            if ($storedHash !== '' && password_verify($password, $storedHash)) {
+                return [
+                    "user_id" => (int)$user->USER_ID,
+                    "name" => (string)($user->NAME ?? ''),
+                    "email" => (string)($user->COMMUNICATION_EMAIL_ID ?? ''),
+                    "user_type_id" => (int)($user->USER_TYPE_ID ?? 0),
+                    "communication_mobile_num_isd" => (int)($user->COMMUNICATION_MOBILE_NUM_ISD ?? 0),
+                    "communication_mobile_num" => (int)($user->COMMUNICATION_MOBILE_NUM ?? 0)  ,
+                    "company_name" => (string)($user->COMPANY_NAME ?? ''),
+                    "designation" => (string)($user->DESIGNATION ?? '') ,
+                    "is_pwd_updated" => (bool)($user->IS_PWD_UPDATED ?? false)
+                ];
+            }
+
+            return [];
 
         } catch (Exception $e) {
             // Log the error (never show raw SQL errors to the user)
@@ -109,6 +130,34 @@ class WebsiteController
                 "status" => false,
                 "message" => "Something went wrong during login. Please try again."
             ];
+        }
+    }
+
+    public function changeUserPassword(int $userId, string $currentPassword, string $newPassword): bool
+    {
+        try {
+            $query = "SELECT erp_password FROM tbl_user WHERE user_id=" . $userId . " LIMIT 1";
+            $arrUserData = $this->dbHelper->select($query);
+
+            if (empty($arrUserData)) {
+                return false;
+            }
+
+            $storedHash = (string)($arrUserData[0]->ERP_PASSWORD ?? '');
+            if ($storedHash === '' || !password_verify($currentPassword, $storedHash)) {
+                return false;
+            }
+
+            $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
+            if ($newHash === false) {
+                return false;
+            }
+
+            $updateQuery = "UPDATE tbl_user SET erp_password='" . addslashes($newHash) . "', is_pwd_updated='1' WHERE user_id=" . $userId . " LIMIT 1";
+            return $this->dbHelper->update($updateQuery) > 0;
+        } catch (Exception $e) {
+            error_log("Password change error: " . $e->getMessage());
+            return false;
         }
     }
 

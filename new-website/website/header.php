@@ -1,6 +1,5 @@
 <?php
-
-require_once __DIR__ . '/../common/functions.php';
+require_once __DIR__ . '/account-helpers.php';
 $paramsArray = GetQueryStringParameters();
 (isset($paramsArray['action']))? $action=$paramsArray['action'] : $action="";
 isset($paramsArray["msg"]) ? $msg=$paramsArray["msg"] : $msg="";
@@ -9,6 +8,10 @@ isset($paramsArray["type"]) ? $toastType=$paramsArray["type"] : $toastType="ok";
 
 $currentPage = $currentPage ?? 'home';
 $pageTitle   ='Sinelec Technologies : Electronic Module and Component Distributor & Expert chip programming services';
+$signedInUser = sinelec_get_signed_in_user();
+$isSignedIn = sinelec_is_signed_in();
+$userDisplayName = trim((string)($signedInUser['NAME'] ?? ''));
+$userFirstName = sinelec_account_first_name($signedInUser);
 
 function navClass(string $page, string $current): string {
     return $page === $current ? 'nav-link active' : 'nav-link';
@@ -83,6 +86,9 @@ $productMegaMenu = [
 <script>
 window.STORE_DATA   = <?= json_encode($storeData ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
 window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
+window.SINELEC_AUTH = {
+  isSignedIn: <?= $isSignedIn ? 'true' : 'false' ?>
+};
 window.FLASH_TOAST  = {
   message: <?= json_encode($msg ?? '', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>,
   type: <?= json_encode($toastType ?? 'ok', JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>
@@ -144,12 +150,31 @@ window.FLASH_TOAST  = {
       </div>
 
       <!-- Account -->
-      <div class="h-act" id="headerAccountBtn" title="Account" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="authModal">
-        <span class="h-label">Hello, Sign in</span>
-        <strong class="h-value">
-          Account &amp; Lists
-          <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </strong>
+      <div class="header-account-wrap">
+        <div class="h-act" id="headerAccountBtn" title="Account" role="button" tabindex="0" aria-haspopup="true" aria-expanded="false" <?= $isSignedIn ? 'aria-controls="accountMenu"' : 'aria-controls="authModal"' ?>>
+          <span class="h-label"><?= $isSignedIn ? 'Hello, ' . htmlspecialchars($userFirstName) : 'Hello, Sign in' ?></span>
+          <strong class="h-value">
+            <?= $isSignedIn ? 'Account &amp; Lists' : 'Account &amp; Lists' ?>
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </strong>
+        </div>
+        <?php if ($isSignedIn): ?>
+        <div class="account-menu" id="accountMenu" hidden>
+          <div class="account-menu-head">
+            <div class="account-menu-title">Signed in as</div>
+            <strong><?= htmlspecialchars($signedInUser['NAME'] ?? $userFirstName) ?></strong>
+            <span><?= htmlspecialchars($signedInUser['EMAIL'] ?? '') ?></span>
+          </div>
+          <div class="account-menu-links">
+            <?php foreach (sinelec_account_nav_items() as $key => $item): ?>
+            <a href="<?= htmlspecialchars($item['href']) ?>" class="account-menu-link<?= $key === 'logout' ? ' is-logout' : '' ?>">
+              <span class="account-menu-link-icon"><?= sinelec_account_icon($item['icon']) ?></span>
+              <span><?= htmlspecialchars($item['label']) ?></span>
+            </a>
+            <?php endforeach; ?>
+          </div>
+        </div>
+        <?php endif; ?>
       </div>
 
       <!-- Cart -->
@@ -303,17 +328,26 @@ window.FLASH_TOAST  = {
 <div class="mobile-menu" id="mobMenu" aria-hidden="true">
   <div class="mob-overlay" onclick="closeMobMenu()"></div>
   <div class="mob-panel">
-    <div class="mob-hd">
-      <div class="mob-hd-title">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        Hello, Guest
-      </div>
+	    <div class="mob-hd">
+	      <div class="mob-hd-title">
+	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+	        Hello, <?= htmlspecialchars($userFirstName) ?>
+	      </div>
       <button class="mob-close" onclick="closeMobMenu()" aria-label="Close menu">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
     </div>
-    <nav class="mob-nav">
-      <a href="index" class="mob-link <?= $currentPage === 'home' ? 'on' : '' ?>">
+	    <nav class="mob-nav">
+	      <?php if ($isSignedIn): ?>
+	      <div class="mob-section-title">My Account</div>
+	      <a href="profile" class="mob-link <?= $currentPage === 'profile' ? 'on' : '' ?>">Profile</a>
+	      <a href="my-orders" class="mob-link <?= $currentPage === 'my-orders' ? 'on' : '' ?>">My Order</a>
+	      <a href="delivery-address" class="mob-link <?= $currentPage === 'delivery-address' ? 'on' : '' ?>">Delivery Address</a>
+	      <a href="change-password" class="mob-link <?= $currentPage === 'change-password' ? 'on' : '' ?>">Change Password</a>
+	      <a href="service?urlstring=<?= EncryptURL('action=Logout') ?>" class="mob-link">Logout</a>
+	      <div class="mob-divider"></div>
+	      <?php endif; ?>
+	      <a href="index" class="mob-link <?= $currentPage === 'home' ? 'on' : '' ?>">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
         Home
       </a>
@@ -412,14 +446,14 @@ window.FLASH_TOAST  = {
     <p class="auth-subtitle" id="authModalDesc">Sign in to continue.</p>
 
     <div class="auth-panel auth-panel-signin is-active" id="authSignInPanel">
-      <form id="authSignInForm" class="auth-form" novalidate>
+      <form id="authSignInForm" class="auth-form" method="POST" action="service?urlstring=<?= EncryptURL('action=Login') ?>" novalidate>
         <label class="auth-field">
-          <span>User ID</span>
+          <span>Email ID</span>
           <div class="auth-input-wrap">
             <span class="auth-input-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity=".0"/><path d="M4 6l8 6 8-6"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg>
             </span>
-            <input type="text" id="authUserId" required>
+            <input type="email" id="authUserId" name="authUserId" required>
           </div>
         </label>
 
@@ -429,7 +463,7 @@ window.FLASH_TOAST  = {
             <span class="auth-input-icon">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V8a5 5 0 0 1 10 0v3"/></svg>
             </span>
-            <input type="password" id="authPassword" required>
+            <input type="password" id="authPassword" name="authPassword" required>
             <button type="button" class="auth-pass-eye" data-toggle-pass data-pass-target="authPassword" aria-label="Show password" title="Show password">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>
             </button>
@@ -467,6 +501,12 @@ window.FLASH_TOAST  = {
         <button type="button" class="auth-link-btn" data-auth-switch="signup">Create new account</button>
         <button type="button" class="auth-link-btn" id="authForgotBtn">Forgot password</button>
       </div>
+
+      <?php if ($isSignedIn): ?>
+      <div class="auth-links-row auth-links-row-center">
+        <a href="service?urlstring=<?= EncryptURL('action=Logout') ?>" class="auth-link-btn">Sign out</a>
+      </div>
+      <?php endif; ?>
 
       <p class="auth-terms">By continuing, you agree to our <a href="#">Terms of Use</a> &amp; <a href="#">Privacy Policy</a>.</p>
     </div>
