@@ -7,17 +7,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 require_once __DIR__ . '/../common/functions.php';
 function redirectWithFlash(string $target, string $type, string $message, string $extra = ''): void
 {
-    $payload = "action=&type={$type}&msg={$message}";
+    sinelec_set_flash($type, $message);
+    $location = $target;
     if ($extra !== '') {
-        $payload .= '&' . ltrim($extra, '&');
+        $location .= '?' . ltrim($extra, '?&');
     }
-    header("location:{$target}?urlstring=" . EncryptURL($payload));
+    header("location:{$location}");
     exit();
 }
 
 $paramsArray = GetQueryStringParameters();
 (isset($paramsArray['action']))? $action=$paramsArray['action'] : $action="";
-isset($paramsArray["msg"]) ? $msg=$paramsArray["msg"] : $msg="";
 require_once __DIR__ . '/../controller/website_controller.php';
 $controller = new WebsiteController();
 

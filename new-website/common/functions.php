@@ -542,4 +542,33 @@ function GetQueryStringParameters()
 
 	return $paramArray;
 }
+
+function sinelec_set_flash(?string $type, ?string $message): void
+{
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		session_start();
+	}
+
+	$_SESSION['type'] = $type;
+	$_SESSION['message'] = $message;
+}
+
+function sinelec_consume_flash(): array
+{
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		session_start();
+	}
+
+	$type = $_SESSION['type'] ?? null;
+	$message = $_SESSION['message'] ?? null;
+
+	$_SESSION['type'] = null;
+	$_SESSION['message'] = null;
+	unset($_SESSION['type'], $_SESSION['message']);
+
+	return [
+		'type' => $type,
+		'message' => $message,
+	];
+}
 ?>

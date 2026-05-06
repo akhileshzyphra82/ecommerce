@@ -77,6 +77,7 @@ function sinelec_require_login(): array
         return $user;
     }
 
-    header('location:index?urlstring=' . EncryptURL('action=&type=warn&msg=Please sign in to access your account.'));
+    sinelec_set_flash('warn', 'Please sign in to access your account.');
+    header('location:index');
     exit();
 }

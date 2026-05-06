@@ -1,10 +1,8 @@
 <?php
 require_once __DIR__ . '/account-helpers.php';
-$paramsArray = GetQueryStringParameters();
-(isset($paramsArray['action']))? $action=$paramsArray['action'] : $action="";
-isset($paramsArray["msg"]) ? $msg=$paramsArray["msg"] : $msg="";
-isset($paramsArray["type"]) ? $toastType=$paramsArray["type"] : $toastType="ok";
-
+$flashToast = sinelec_consume_flash();
+$msg = (string)($flashToast['message'] ?? '');
+$toastType = (string)($flashToast['type'] ?? 'ok');
 
 $currentPage = $currentPage ?? 'home';
 $pageTitle   ='Sinelec Technologies : Electronic Module and Component Distributor & Expert chip programming services';
