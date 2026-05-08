@@ -41,11 +41,13 @@ function goTo(page, opts = {}) {
   if (opts.mfr) params.set('mfr', opts.mfr);
   if (opts.q)   params.set('q',   opts.q);
   const qs = params.toString();
+  showPageLoader('Loading...');
   window.location.href = base + (qs ? '?' + qs : '');
 }
 
 function openPDP(id) {
   addRecentlyViewed(id);
+  showPageLoader('Loading product...');
   window.location.href = 'product?id=' + id;
 }
 
@@ -148,6 +150,55 @@ window.showToastMessage = showToastMessage;
 window.showAppToast = showToastMessage;
 window.toast = showToastMessage;
 const toast = showToastMessage;
+
+/* ── Global Loader ──────────────────────────────────────────── */
+function showPageLoader(message = 'Please wait...') {
+  const loader = document.getElementById('globalPageLoader');
+  if (!loader) return;
+  loader.classList.add('is-visible');
+  loader.setAttribute('aria-hidden', 'false');
+}
+
+function hidePageLoader() {
+  const loader = document.getElementById('globalPageLoader');
+  if (!loader) return;
+  loader.classList.remove('is-visible');
+  loader.setAttribute('aria-hidden', 'true');
+}
+
+window.showPageLoader = showPageLoader;
+window.hidePageLoader = hidePageLoader;
+
+function initGlobalLoader() {
+  hidePageLoader();
+
+  document.addEventListener('submit', e => {
+    const form = e.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    if (form.dataset.loader === 'off') return;
+    if (e.defaultPrevented) return;
+    if (typeof form.checkValidity === 'function' && !form.checkValidity()) return;
+
+    showPageLoader(form.dataset.loaderText || 'Submitting...');
+  });
+
+  document.addEventListener('click', e => {
+    const anchor = e.target.closest('a[href]');
+    if (!(anchor instanceof HTMLAnchorElement)) return;
+    if (anchor.dataset.loader === 'off') return;
+    if (e.defaultPrevented) return;
+    if (e.button !== 0) return;
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    if (anchor.target && anchor.target !== '_self') return;
+    if (anchor.hasAttribute('download')) return;
+
+    const href = (anchor.getAttribute('href') || '').trim();
+    if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+    if (href.startsWith('mailto:') || href.startsWith('tel:')) return;
+
+    showPageLoader(anchor.dataset.loaderText || 'Loading...');
+  });
+}
 
 /* ── Stars ───────────────────────────────────────────────────── */
 function stars(r, size = 13) {
@@ -306,7 +357,9 @@ function initCheckoutPage() {
   const emptyState = document.getElementById('checkoutEmptyState');
   const summaryContent = document.getElementById('checkoutSummaryContent');
   const summaryItems = document.getElementById('checkoutSummaryItems');
+  const productSubText = document.getElementById('checkoutProductSub');
   const selectedAddressText = document.getElementById('checkoutSelectedAddressText');
+  const changeAddressBtn = document.getElementById('checkoutChangeAddressBtn');
   const shippingText = document.getElementById('checkoutShippingText');
   const paymentText = document.getElementById('checkoutPaymentText');
   const subtotalEl = document.getElementById('checkoutSubtotal');
@@ -315,6 +368,9 @@ function initCheckoutPage() {
   const totalEl = document.getElementById('checkoutTotal');
   const placeBtn = document.getElementById('checkoutPlaceBtn');
   const invoiceEmail = document.getElementById('checkoutInvoiceEmail');
+  const euVatInput = document.getElementById('checkoutEuVat');
+  const vatApplyBtn = document.getElementById('checkoutVatApplyBtn');
+  const vatState = document.getElementById('checkoutVatState');
 
   const ADDRESS_KEY = 'sinelec_checkout_addresses';
   const SELECTED_KEY = 'sinelec_checkout_selected_address';
@@ -334,6 +390,28 @@ function initCheckoutPage() {
   }
 
   let selectedAddressId = localStorage.getItem(SELECTED_KEY) || addresses[0]?.id || '';
+  let selectedCheckoutIds = new Set(cartItems.map(item => item.id));
+  let vatApplied = false;
+
+  function normalizeSelectedCheckoutIds() {
+    const currentIds = new Set(cartItems.map(item => item.id));
+    selectedCheckoutIds = new Set([...selectedCheckoutIds].filter(id => currentIds.has(id)));
+  }
+
+  function getSelectedCheckoutItems() {
+    return cartItems.filter(item => selectedCheckoutIds.has(item.id));
+  }
+
+  function selectedSubtotal() {
+    return getSelectedCheckoutItems().reduce((sum, item) => sum + (item.price * item.qty), 0);
+  }
+
+  function syncSelectedAddressFromStorage() {
+    const stored = localStorage.getItem(SELECTED_KEY) || '';
+    if (stored && addresses.some(address => address.id === stored)) {
+      selectedAddressId = stored;
+    }
+  }
 
   function saveAddresses() {
     localStorage.setItem(ADDRESS_KEY, JSON.stringify(addresses));
@@ -359,6 +437,7 @@ function initCheckoutPage() {
   }
 
   function renderAddresses() {
+    syncSelectedAddressFromStorage();
     if (!addressGrid) return;
     addressGrid.innerHTML = addresses.map(address => `
       <article class="checkout-address-card ${address.id === selectedAddressId ? 'is-selected' : ''}" data-address-id="${address.id}">
@@ -383,37 +462,59 @@ function initCheckoutPage() {
   }
 
   function renderSummary() {
-    const sub = cartSubtotal();
+    syncSelectedAddressFromStorage();
+    normalizeSelectedCheckoutIds();
+    const selectedItems = getSelectedCheckoutItems();
+    const sub = selectedSubtotal();
     const ship = shippingCharge(sub);
-    const gst = sub * 0.18;
+    const baseGst = sub * 0.18;
+    const gst = vatApplied ? 0 : baseGst;
     const total = sub + ship + gst;
     const selectedAddress = getSelectedAddress();
     const shippingLabel = currentShippingMode() === 'priority' ? 'Priority Dispatch' : 'Standard Delivery';
     const paymentMap = {
       paypal: 'PayPal',
+      card_paypal: 'Credit Card via Paypal (No Paypal Account needed)',
       bank: 'Bank Transfer',
-      card: 'Credit / Debit Card',
+      invoice: 'Invoice (Corporate customers)',
     };
 
     if (cartItems.length === 0) {
       emptyState?.classList.remove('hidden');
       summaryContent?.classList.add('hidden');
       placeBtn && (placeBtn.disabled = true);
+      if (productSubText) {
+        productSubText.textContent = 'No items in cart.';
+      }
       return;
     }
 
     emptyState?.classList.add('hidden');
     summaryContent?.classList.remove('hidden');
-    if (placeBtn) placeBtn.disabled = false;
+    if (placeBtn) placeBtn.disabled = selectedItems.length === 0;
+    if (productSubText) {
+      productSubText.textContent = `${selectedItems.length} of ${cartItems.length} item(s) selected for checkout.`;
+    }
 
     if (summaryItems) {
       summaryItems.innerHTML = cartItems.map(item => `
         <div class="checkout-item">
           <img src="${item.image}" alt="${item.name}" onerror="this.src='https://placehold.co/68x68/EBF3FF/0066CC?text=${encodeURIComponent(item.sku)}'">
           <div>
-            <div class="checkout-item-sku">${item.sku}</div>
+            <div class="checkout-item-head">
+              <div class="checkout-item-left">
+                <input type="checkbox" class="checkout-item-select" data-checkout-select="${item.id}" ${selectedCheckoutIds.has(item.id) ? 'checked' : ''}>
+                <div class="checkout-item-sku">${item.sku}</div>
+              </div>
+              <button type="button" class="checkout-item-remove" data-checkout-remove="${item.id}" aria-label="Remove product">${ic('trash', 14, 14)}</button>
+            </div>
             <div class="checkout-item-name">${item.name}</div>
-            <div class="checkout-item-meta">Qty: ${item.qty} · Unit: ₹${item.price.toFixed(2)}</div>
+            <div class="checkout-item-meta">Unit: ₹${item.price.toFixed(2)}</div>
+            <div class="checkout-item-controls">
+              <button type="button" class="checkout-qty-btn" data-checkout-qty="${item.id}" data-delta="-1">−</button>
+              <span class="checkout-qty-num">${item.qty}</span>
+              <button type="button" class="checkout-qty-btn" data-checkout-qty="${item.id}" data-delta="1">+</button>
+            </div>
           </div>
           <div class="checkout-item-price">₹${(item.qty * item.price).toFixed(2)}</div>
         </div>
@@ -425,8 +526,17 @@ function initCheckoutPage() {
     if (paymentText) paymentText.textContent = paymentMap[currentPaymentMode()] || 'PayPal';
     if (subtotalEl) subtotalEl.textContent = `₹${sub.toFixed(2)}`;
     if (shippingCostEl) shippingCostEl.textContent = ship === 0 ? 'FREE' : `₹${ship.toFixed(2)}`;
-    if (taxEl) taxEl.textContent = `₹${gst.toFixed(2)}`;
+    if (taxEl) {
+      if (vatApplied && baseGst > 0) {
+        taxEl.innerHTML = `<span class="checkout-tax-old">₹${baseGst.toFixed(2)}</span><span class="checkout-tax-applied">${ic('check', 12, 12)}VAT applied</span>`;
+      } else {
+        taxEl.textContent = `₹${gst.toFixed(2)}`;
+      }
+    }
     if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
+    if (vatState) {
+      vatState.classList.toggle('hidden', !vatApplied);
+    }
   }
 
   toggleAddressBtn?.addEventListener('click', () => {
@@ -472,7 +582,79 @@ function initCheckoutPage() {
     input.addEventListener('change', renderSummary);
   });
 
+  summaryItems?.addEventListener('click', e => {
+    const qtyBtn = e.target.closest('[data-checkout-qty]');
+    if (qtyBtn) {
+      const id = Number(qtyBtn.getAttribute('data-checkout-qty') || 0);
+      const delta = Number(qtyBtn.getAttribute('data-delta') || 0);
+      const item = cartItems.find(entry => entry.id === id);
+      if (item && delta !== 0) {
+        const nextQty = item.qty + delta;
+        cartQty(id, nextQty);
+        if (nextQty <= 0) {
+          selectedCheckoutIds.delete(id);
+        }
+        renderSummary();
+      }
+      return;
+    }
+
+    const removeBtn = e.target.closest('[data-checkout-remove]');
+    if (removeBtn) {
+      const id = Number(removeBtn.getAttribute('data-checkout-remove') || 0);
+      selectedCheckoutIds.delete(id);
+      cartRemove(id);
+      renderSummary();
+      return;
+    }
+  });
+
+  summaryItems?.addEventListener('change', e => {
+    const check = e.target;
+    if (!(check instanceof HTMLInputElement)) return;
+    if (!check.matches('[data-checkout-select]')) return;
+    const id = Number(check.getAttribute('data-checkout-select') || 0);
+    if (!id) return;
+    if (check.checked) {
+      selectedCheckoutIds.add(id);
+    } else {
+      selectedCheckoutIds.delete(id);
+    }
+    renderSummary();
+  });
+
+  changeAddressBtn?.addEventListener('click', () => {
+    const headerDeliveryBtn = document.getElementById('headerDeliveryBtn');
+    if (headerDeliveryBtn) {
+      headerDeliveryBtn.click();
+      setTimeout(() => {
+        syncSelectedAddressFromStorage();
+        renderSummary();
+      }, 140);
+    }
+  });
+
+  vatApplyBtn?.addEventListener('click', () => {
+    const vatText = euVatInput?.value.trim() || '';
+    if (!vatText) {
+      vatApplied = false;
+      vatState?.classList.add('hidden');
+      toast('Please enter EU VAT number.', 'warn');
+      renderSummary();
+      return;
+    }
+    vatApplied = true;
+    vatState?.classList.remove('hidden');
+    toast('EU VAT applied successfully.', 'ok');
+    renderSummary();
+  });
+
   placeBtn?.addEventListener('click', () => {
+    const selectedItems = getSelectedCheckoutItems();
+    if (selectedItems.length === 0) {
+      toast('Please select at least one product to place the order.', 'warn');
+      return;
+    }
     if (cartItems.length === 0) {
       toast('Your cart is empty.', 'warn');
       return;
@@ -484,7 +666,13 @@ function initCheckoutPage() {
     if (invoiceEmail && !invoiceEmail.value.trim()) {
       invoiceEmail.value = 'contact@sinelec-tech.com';
     }
-    cartItems.splice(0, cartItems.length);
+    const selectedIds = new Set(selectedItems.map(item => item.id));
+    for (let i = cartItems.length - 1; i >= 0; i -= 1) {
+      if (selectedIds.has(cartItems[i].id)) {
+        cartItems.splice(i, 1);
+      }
+    }
+    selectedCheckoutIds.clear();
     saveCart();
     renderSummary();
     toast('Order placed successfully! Our team will contact you with confirmation details.', 'ok');
@@ -719,7 +907,7 @@ function showSearchDrop(q) {
       </div>
       <div class="sdrop-price">₹${(p.priceBreaks ? p.priceBreaks[0].price : p.price).toFixed(2)}</div>
     </div>`).join('') +
-    `<div class="sdrop-footer" onclick="window.location.href='products?q=${encodeURIComponent(q)}'">See all results for "${q}" →</div>`;
+    `<div class="sdrop-footer" onclick="showPageLoader('Loading search results...');window.location.href='products?q=${encodeURIComponent(q)}'">See all results for "${q}" →</div>`;
   box.classList.add('open');
 }
 
@@ -1411,7 +1599,18 @@ function checkMobile() {
 
 /* ── Delivery location modal ─────────────────────────────────── */
 const DELIVERY_KEY = 'sinelec_delivery_location';
+const ADDRESS_KEY = 'sinelec_checkout_addresses';
+const SELECTED_ADDRESS_KEY = 'sinelec_checkout_selected_address';
 const DEFAULT_DELIVERY = 'Delhi 110001';
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 function formatDeliveryLabel(fullAddress) {
   const text = (fullAddress || '').trim();
@@ -1443,18 +1642,103 @@ function closeDeliveryModal() {
   document.body.style.overflow = '';
 }
 
+function openSignInModalFromDelivery() {
+  const modal = document.getElementById('authModal');
+  if (!modal) return;
+
+  const signInPanel = document.getElementById('authSignInPanel');
+  const signUpPanel = document.getElementById('authSignUpPanel');
+  const title = document.getElementById('authModalTitle');
+  const desc = document.getElementById('authModalDesc');
+  const tabBtns = Array.from(document.querySelectorAll('.auth-switch-tab'));
+
+  signInPanel?.classList.add('is-active');
+  signUpPanel?.classList.remove('is-active');
+  if (title) title.textContent = 'Sign In';
+  if (desc) desc.textContent = 'Sign in to continue.';
+  tabBtns.forEach(btn => btn.classList.toggle('is-active', (btn.dataset.authSwitch || 'signin') === 'signin'));
+
+  modal.hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function loadSavedDeliveryAddresses() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(ADDRESS_KEY) || '[]');
+    return Array.isArray(stored) ? stored : [];
+  } catch {
+    return [];
+  }
+}
+
+function getDefaultAddressId(addresses) {
+  if (!Array.isArray(addresses) || !addresses.length) return '';
+  const selectedId = localStorage.getItem(SELECTED_ADDRESS_KEY) || '';
+  if (selectedId && addresses.some(item => item && item.id === selectedId)) {
+    return selectedId;
+  }
+  const explicitDefault = addresses.find(item => item && item.isDefault);
+  return explicitDefault?.id || addresses[0].id || '';
+}
+
+function formatAddressPreview(address = {}) {
+  const label = (address.label || 'HOME').toString().trim().toUpperCase();
+  const name = (address.name || '').toString().trim();
+  const phone = (address.phone || '').toString().trim();
+  const line = (address.line || '').toString().trim();
+  return {
+    id: (address.id || '').toString(),
+    label,
+    name,
+    phone,
+    line
+  };
+}
+
+function renderDeliveryAddressList(addressList) {
+  if (!addressList) return;
+
+  const addresses = loadSavedDeliveryAddresses().map(formatAddressPreview).filter(item => item.id && item.line);
+  if (!addresses.length) {
+    addressList.innerHTML = '<div class="delivery-empty-row">No saved address found. Add a new address below.</div>';
+    return;
+  }
+
+  const defaultId = getDefaultAddressId(addresses);
+  addressList.innerHTML = addresses.map(item => {
+    const isDefault = item.id === defaultId;
+    const safeValue = escapeHtml(item.line);
+    const safeLabel = escapeHtml(item.label);
+    const safeName = escapeHtml(item.name);
+    const safePhone = escapeHtml(item.phone);
+
+    return `
+      <label class="delivery-address-item">
+        <input type="radio" name="deliveryAddress" value="${safeValue}" data-address-id="${escapeHtml(item.id)}" ${isDefault ? 'checked' : ''}>
+        <span class="delivery-address-main">
+          <strong>${safeLabel}${isDefault ? ' · Default' : ''}</strong>
+          <small>${safeName}${safePhone ? ' · ' + safePhone : ''}</small>
+          <small>${safeValue}</small>
+        </span>
+      </label>
+    `;
+  }).join('');
+
+  const checked = addressList.querySelector('input[name="deliveryAddress"]:checked');
+  if (checked instanceof HTMLInputElement) {
+    setDeliveryLocation(checked.value);
+  }
+}
+
 function openDeliveryModal() {
+  if (!AUTH_STATE.isSignedIn) {
+    openSignInModalFromDelivery();
+    return;
+  }
   const modal = document.getElementById('deliveryModal');
   if (!modal) return;
-  let currentValue = '';
-  try { currentValue = localStorage.getItem(DELIVERY_KEY) || ''; } catch {}
-  if (!currentValue) currentValue = document.getElementById('deliveryLocationText')?.textContent?.trim() || '';
-  const manualInput = document.getElementById('manualLocationInput');
-  if (manualInput) manualInput.value = currentValue;
-  document.querySelectorAll('input[name="deliveryAddress"]').forEach(input => {
-    if (!(input instanceof HTMLInputElement)) return;
-    input.checked = input.value === currentValue;
-  });
+  const addressList = document.getElementById('deliveryAddressList');
+  renderDeliveryAddressList(addressList);
   modal.hidden = false;
   document.body.style.overflow = 'hidden';
 }
@@ -1463,9 +1747,6 @@ function initDeliveryLocationModal() {
   const headerBtn = document.getElementById('headerDeliveryBtn');
   const modal = document.getElementById('deliveryModal');
   const closeEls = Array.from(document.querySelectorAll('[data-delivery-close]'));
-  const useCurrentBtn = document.getElementById('useCurrentLocBtn');
-  const manualInput = document.getElementById('manualLocationInput');
-  const applyManualBtn = document.getElementById('applyManualLocBtn');
   const addressList = document.getElementById('deliveryAddressList');
   if (!headerBtn || !modal) return;
 
@@ -1483,83 +1764,16 @@ function initDeliveryLocationModal() {
   });
   closeEls.forEach(el => el.addEventListener('click', closeDeliveryModal));
 
-  useCurrentBtn?.addEventListener('click', () => {
-    if (!navigator.geolocation) {
-      toast('Geolocation not supported. Please enter location manually.', 'warn');
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      () => {
-        setDeliveryLocation('Current Location');
-        closeDeliveryModal();
-      },
-      () => {
-        toast('Unable to detect location. Please enter manually.', 'warn');
-      },
-      { enableHighAccuracy: false, timeout: 7000, maximumAge: 60000 }
-    );
-  });
-
-  applyManualBtn?.addEventListener('click', () => {
-    const val = manualInput?.value.trim() || '';
-    if (!val) {
-      toast('Please enter a location first.', 'warn');
-      return;
-    }
-    setDeliveryLocation(val);
-    closeDeliveryModal();
-  });
-
-  manualInput?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      applyManualBtn?.click();
-    }
-  });
-
   addressList?.addEventListener('change', e => {
     const target = e.target;
     if (!(target instanceof HTMLInputElement)) return;
     if (target.name !== 'deliveryAddress') return;
+    const addressId = target.dataset.addressId || '';
+    if (addressId) {
+      try { localStorage.setItem(SELECTED_ADDRESS_KEY, addressId); } catch {}
+    }
     setDeliveryLocation(target.value);
     closeDeliveryModal();
-  });
-
-  addressList?.addEventListener('click', e => {
-    const actionBtn = e.target.closest('[data-address-action]');
-    if (!(actionBtn instanceof HTMLElement)) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const action = actionBtn.dataset.addressAction;
-    const item = actionBtn.closest('.delivery-address-item');
-    if (!(item instanceof HTMLElement)) return;
-    const radio = item.querySelector('input[name="deliveryAddress"]');
-    const label = item.querySelector('.delivery-address-main');
-    if (!(radio instanceof HTMLInputElement) || !(label instanceof HTMLElement)) return;
-
-    if (action === 'edit') {
-      const next = window.prompt('Edit address', radio.value);
-      if (!next || !next.trim()) return;
-      const updated = next.trim();
-      radio.value = updated;
-      label.textContent = updated;
-      if (radio.checked) setDeliveryLocation(updated);
-      return;
-    }
-
-    if (action === 'delete') {
-      const isSelected = radio.checked;
-      item.remove();
-      if (isSelected) {
-        const first = addressList.querySelector('input[name="deliveryAddress"]');
-        if (first instanceof HTMLInputElement) {
-          first.checked = true;
-          setDeliveryLocation(first.value);
-        } else {
-          setDeliveryLocation(DEFAULT_DELIVERY);
-        }
-      }
-    }
   });
 
   document.addEventListener('keydown', e => {
@@ -1619,6 +1833,15 @@ function initAuthModal() {
   }
   closeEls.forEach(el => el.addEventListener('click', closeAuth));
   switchBtns.forEach(btn => btn.addEventListener('click', () => switchAuth(btn.dataset.authSwitch || 'signin')));
+
+  const externalAuthTriggers = Array.from(document.querySelectorAll('[data-auth-open]'));
+  externalAuthTriggers.forEach(triggerEl => {
+    triggerEl.addEventListener('click', e => {
+      e.preventDefault();
+      const requestedMode = (triggerEl.dataset.authOpen || 'signin').toLowerCase();
+      openAuth(requestedMode === 'signup' ? 'signup' : 'signin');
+    });
+  });
 
   forgotBtn?.addEventListener('click', () => {
     toast('Password recovery link flow will be available soon.', 'warn');
@@ -1702,6 +1925,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ── Common init (every page) ─────────────────────────────── */
   updateCartUI();
+  initGlobalLoader();
   initScrollTop();
   renderCompareBar();
   initDeliveryLocationModal();

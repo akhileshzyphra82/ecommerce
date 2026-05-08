@@ -133,30 +133,77 @@ class WebsiteController
         }
     }
 
-    public function changeUserPassword(int $userId, string $currentPassword, string $newPassword): bool
+    public function changeUserPassword(int $userId, string $currentPassword, string $newPassword, string &$errorCode = ''): bool
     {
         try {
+            $errorCode = '';
             $query = "SELECT erp_password FROM tbl_user WHERE user_id=" . $userId . " LIMIT 1";
             $arrUserData = $this->dbHelper->select($query);
 
             if (empty($arrUserData)) {
+                $errorCode = 'user_not_found';
                 return false;
             }
 
             $storedHash = (string)($arrUserData[0]->ERP_PASSWORD ?? '');
             if ($storedHash === '' || !password_verify($currentPassword, $storedHash)) {
+                $errorCode = 'current_password_invalid';
+                return false;
+            }
+
+            if (password_verify($newPassword, $storedHash)) {
+                $errorCode = 'same_as_current';
                 return false;
             }
 
             $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
             if ($newHash === false) {
+                $errorCode = 'hash_failed';
                 return false;
             }
 
             $updateQuery = "UPDATE tbl_user SET erp_password='" . addslashes($newHash) . "', is_pwd_updated='1' WHERE user_id=" . $userId . " LIMIT 1";
-            return $this->dbHelper->update($updateQuery) > 0;
+            $rows = $this->dbHelper->update($updateQuery);
+            if ($rows > 0) {
+                return true;
+            }
+
+            $errorCode = 'update_failed';
+            return false;
         } catch (Exception $e) {
             error_log("Password change error: " . $e->getMessage());
+            $errorCode = 'exception';
+            return false;
+        }
+    }
+
+    public function updateUserProfile(array $arrUserData): bool
+    {
+        try {
+            $userId = (int)($arrUserData['user_id'] ?? 0);
+            if ($userId <= 0) {
+                return false;
+            }
+
+            $name = addslashes(trim((string)($arrUserData['name'] ?? '')));
+            $phoneCode = (int)($arrUserData['communication_mobile_num_isd'] ?? 0);
+            $mobileNumber = addslashes(trim((string)($arrUserData['communication_mobile_num'] ?? '')));
+            $companyName = addslashes(trim((string)($arrUserData['company_name'] ?? '')));
+            $designation = addslashes(trim((string)($arrUserData['designation'] ?? '')));
+
+            $query = "UPDATE tbl_user SET
+                        name='" . $name . "',
+                        communication_mobile_num_isd=" . $phoneCode . ",
+                        communication_mobile_num='" . $mobileNumber . "',
+                        company_name='" . $companyName . "',
+                        designation='" . $designation . "'
+                      WHERE user_id=" . $userId . "
+                      LIMIT 1";
+
+            $rows = $this->dbHelper->update($query);
+            return $rows >= 0;
+        } catch (Exception $e) {
+            error_log("Profile update error: " . $e->getMessage());
             return false;
         }
     }

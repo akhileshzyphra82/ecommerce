@@ -403,23 +403,13 @@ window.FLASH_TOAST  = {
     <p class="delivery-modal-subtitle">Set where you want orders to be delivered for accurate stock and shipping estimates.</p>
 
     <div class="delivery-modal-block">
-      <div class="delivery-modal-inline">
-        <div class="delivery-modal-label">Choose your current location</div>
-        <button type="button" class="delivery-modal-btn" id="useCurrentLocBtn">Use Current Location</button>
-      </div>
+      <div class="delivery-modal-label">Select existing address</div>
+      <div class="delivery-address-list" id="deliveryAddressList"></div>
     </div>
-
-    <div class="delivery-modal-or">Or</div>
 
     <div class="delivery-modal-block">
-      <div class="delivery-modal-label">Enter your location manually</div>
-      <div class="delivery-manual-row">
-        <input type="text" id="manualLocationInput" class="delivery-manual-inp" placeholder="City / Area / PIN Code">
-        <button type="button" class="delivery-modal-btn delivery-modal-btn--apply" id="applyManualLocBtn">Set</button>
-      </div>
+      <a href="delivery-address" class="delivery-add-address-link">+ Add new address</a>
     </div>
-
-    <div class="delivery-modal-or">Or</div>
 
     <div class="delivery-modal-block delivery-modal-block--info">
       <div class="delivery-modal-label">Shipping and payment term for your location</div>

@@ -100,7 +100,7 @@
     <div class="cart-subtotal-row"><span>Shipping</span><span id="cartShip">₹99.00</span></div>
     <div class="cart-subtotal-row"><span>GST (18%)</span><span id="cartGST">₹0.00</span></div>
     <div class="cart-subtotal-row total-row"><span>Order Total</span><span id="cartTotal">₹0.00</span></div>
-    <button class="cart-checkout-btn" onclick="window.location.href='checkout'">
+    <button class="cart-checkout-btn" onclick="showPageLoader('Redirecting to checkout...');window.location.href='checkout'">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
       Proceed to Checkout
     </button>
@@ -131,6 +131,13 @@
 
 <!-- Toast Container -->
 <div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Global Loader -->
+<div class="page-loader-overlay" id="globalPageLoader" aria-hidden="true">
+  <div class="page-loader-card">
+    <span class="page-loader-spinner" aria-hidden="true"></span>
+  </div>
+</div>
 
 <!-- ══════════ SCRIPTS ════════════════════════════════════════ -->
 <script src="../js/cart.js"></script>

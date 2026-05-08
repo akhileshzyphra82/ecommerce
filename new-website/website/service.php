@@ -114,6 +114,7 @@ switch($action)
         $currentPassword = (string)($_POST['current_password'] ?? '');
         $newPassword = (string)($_POST['new_password'] ?? '');
         $confirmPassword = (string)($_POST['confirm_password'] ?? '');
+        $passwordRule = '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/';
 
         if ($userId <= 0) {
             redirectWithFlash('index', 'warn', 'Please sign in to continue.');
@@ -123,7 +124,7 @@ switch($action)
             redirectWithFlash('change-password', 'warn', 'Please fill all password fields.');
         }
 
-        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/', $newPassword)) {
+        if (!preg_match($passwordRule, $newPassword)) {
             redirectWithFlash('change-password', 'warn', 'New password must be at least 8 characters and include letters numbers and special characters.');
         }
 
@@ -131,12 +132,33 @@ switch($action)
             redirectWithFlash('change-password', 'warn', 'New password and confirm password do not match.');
         }
 
-        if ($controller->changeUserPassword($userId, $currentPassword, $newPassword)) {
-            $_SESSION['sinelec_user']['IS_PWD_UPDATED'] = true;
-            redirectWithFlash('change-password', 'ok', 'Password updated successfully.');
+        if ($currentPassword === $newPassword) {
+            redirectWithFlash('change-password', 'warn', 'New password must be different from current password.');
         }
 
-        redirectWithFlash('change-password', 'err', 'Unable to update password. Please check your current password.');
+        $changeErrorCode = '';
+        if ($controller->changeUserPassword($userId, $currentPassword, $newPassword, $changeErrorCode)) {
+            $_SESSION = [];
+            if (ini_get('session.use_cookies')) {
+                $params = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+            }
+            session_destroy();
+            session_start();
+            redirectWithFlash('index', 'ok', 'Password updated successfully. Please login again.');
+        }
+
+        switch ($changeErrorCode) {
+            case 'current_password_invalid':
+                redirectWithFlash('change-password', 'err', 'Current password is incorrect.');
+                break;
+            case 'same_as_current':
+                redirectWithFlash('change-password', 'warn', 'New password must be different from current password.');
+                break;
+            default:
+                redirectWithFlash('change-password', 'err', 'Unable to update password right now. Please try again.');
+                break;
+        }
     break;
 
     case "Logout":
@@ -148,6 +170,47 @@ switch($action)
         session_destroy();
         session_start();
         redirectWithFlash('index', 'ok', 'Signed out successfully.');
+    break;
+
+    case "UpdateProfile":
+        $userId = (int)($_SESSION['sinelec_user']['USER_ID'] ?? 0);
+        if ($userId <= 0) {
+            redirectWithFlash('index', 'warn', 'Please sign in to continue.');
+        }
+
+        $name = trim((string)($_POST['profile_name'] ?? ''));
+        $phoneCode = preg_replace('/[^0-9]/', '', (string)($_POST['profile_phone_code'] ?? ''));
+        $number = preg_replace('/[^0-9]/', '', (string)($_POST['profile_number'] ?? ''));
+        $company = trim((string)($_POST['profile_company'] ?? ''));
+        $designation = trim((string)($_POST['profile_designation'] ?? ''));
+
+        if ($name === '' || $phoneCode === '' || $number === '') {
+            redirectWithFlash('profile', 'warn', 'Name, phone code, and number are required.');
+        }
+
+        if (strlen($number) < 6) {
+            redirectWithFlash('profile', 'warn', 'Please enter a valid mobile number.');
+        }
+
+        $updated = $controller->updateUserProfile([
+            'user_id' => $userId,
+            'name' => $name,
+            'communication_mobile_num_isd' => (int)$phoneCode,
+            'communication_mobile_num' => $number,
+            'company_name' => $company,
+            'designation' => $designation,
+        ]);
+
+        if ($updated) {
+            $_SESSION['sinelec_user']['NAME'] = $name;
+            $_SESSION['sinelec_user']['COMMUNICATION_MOBILE_NUM_ISD'] = (int)$phoneCode;
+            $_SESSION['sinelec_user']['COMMUNICATION_MOBILE_NUM'] = $number;
+            $_SESSION['sinelec_user']['COMPANY_NAME'] = $company;
+            $_SESSION['sinelec_user']['DESIGNATION'] = $designation;
+            redirectWithFlash('profile', 'ok', 'Profile updated successfully.');
+        }
+
+        redirectWithFlash('profile', 'err', 'Unable to update profile right now. Please try again.');
     break;
 	
 }
