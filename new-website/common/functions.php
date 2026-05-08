@@ -571,4 +571,85 @@ function sinelec_consume_flash(): array
 		'message' => $message,
 	];
 }
+
+function sinelec_env(string $key, ?string $default = null): ?string
+{
+	static $envCache = null;
+
+	if ($envCache === null) {
+		$envCache = [];
+		$envPath = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
+		if (is_file($envPath)) {
+			$lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+			if (is_array($lines)) {
+				foreach ($lines as $line) {
+					$line = trim($line);
+					if ($line === '' || str_starts_with($line, '#') || strpos($line, '=') === false) {
+						continue;
+					}
+
+					list($envKey, $envValue) = explode('=', $line, 2);
+					$envKey = trim($envKey);
+					$envValue = trim($envValue);
+					$envValue = trim($envValue, "\"'");
+					$envCache[$envKey] = $envValue;
+				}
+			}
+		}
+	}
+
+	return $envCache[$key] ?? $default;
+}
+
+function sinelec_validate_turnstile(string $token, ?string $remoteIp = null): array
+{
+	$secretKey = sinelec_env('SECRET_KEY');
+	if (!$secretKey) {
+		return [
+			'success' => false,
+			'error-codes' => ['missing-secret-key'],
+		];
+	}
+
+	if ($token === '') {
+		return [
+			'success' => false,
+			'error-codes' => ['missing-input-response'],
+		];
+	}
+
+	$payload = [
+		'secret' => $secretKey,
+		'response' => $token,
+	];
+
+	if ($remoteIp) {
+		$payload['remoteip'] = $remoteIp;
+	}
+
+	$options = [
+		'http' => [
+			'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+			'method' => 'POST',
+			'content' => http_build_query($payload),
+			'timeout' => 10,
+		],
+	];
+
+	$context = stream_context_create($options);
+	$response = @file_get_contents('https://challenges.cloudflare.com/turnstile/v0/siteverify', false, $context);
+
+	if ($response === false) {
+		return [
+			'success' => false,
+			'error-codes' => ['internal-error'],
+		];
+	}
+
+	$decoded = json_decode($response, true);
+	return is_array($decoded) ? $decoded : [
+		'success' => false,
+		'error-codes' => ['invalid-json'],
+	];
+}
 ?>

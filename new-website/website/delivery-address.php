@@ -314,6 +314,45 @@ $mobile = '+' . trim((string)($user['COMMUNICATION_MOBILE_NUM_ISD'] ?? '49')) . 
     font-size: 20px;
   }
 }
+@media (max-width: 575px) {
+  .delivery-flat-surface {
+    padding: 12px;
+  }
+  .delivery-new-address-panel {
+    padding: 12px;
+  }
+  .delivery-add-toggle {
+    min-height: 44px;
+    padding: 0 12px;
+    gap: 10px;
+  }
+  .delivery-add-toggle strong {
+    font-size: 10.5px;
+  }
+  .delivery-check-wrap {
+    align-items: flex-start;
+  }
+  .account-form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .account-form-actions .account-btn,
+  .account-form-actions .account-btn-secondary {
+    width: 100%;
+    min-height: 38px;
+  }
+  .delivery-row-head,
+  .delivery-name-line,
+  .delivery-type-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .delivery-menu-pop {
+    right: auto;
+    left: 0;
+    min-width: 140px;
+  }
+}
 </style>
 
 <script>

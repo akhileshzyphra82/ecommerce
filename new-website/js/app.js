@@ -1628,8 +1628,10 @@ function setDeliveryLocation(value) {
   const text = (value || '').trim();
   if (!text) return;
   const locText = document.getElementById('deliveryLocationText');
+  const mobLocText = document.getElementById('mobDeliveryLocationText');
   const display = formatDeliveryLabel(text);
   if (locText) locText.textContent = display;
+  if (mobLocText) mobLocText.textContent = display;
   const btn = document.getElementById('headerDeliveryBtn');
   if (btn) btn.setAttribute('title', text);
   try { localStorage.setItem(DELIVERY_KEY, text); } catch {}

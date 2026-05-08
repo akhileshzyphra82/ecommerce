@@ -24,6 +24,16 @@ $controller = new WebsiteController();
 switch($action)
 {	
 	case "Insert":
+		$turnstileToken = trim((string)($_POST['cf-turnstile-response'] ?? ''));
+		$turnstileResult = sinelec_validate_turnstile(
+            $turnstileToken,
+            $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null
+        );
+
+        if (empty($turnstileResult['success'])) {
+            redirectWithFlash('index', 'err', 'Captcha verification failed. Please try again.');
+        }
+
 		$name = trim($_POST['authFullName'] ?? '');
         $email = strtolower(trim($_POST['authEmail'] ?? ''));
         $phone_code = trim($_POST['phone_code'] ?? '');
@@ -75,6 +85,16 @@ switch($action)
 	break;
 
     case "Login":
+        $turnstileToken = trim((string)($_POST['cf-turnstile-response'] ?? ''));
+        $turnstileResult = sinelec_validate_turnstile(
+            $turnstileToken,
+            $_SERVER['HTTP_CF_CONNECTING_IP'] ?? $_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR'] ?? null
+        );
+
+        if (empty($turnstileResult['success'])) {
+            redirectWithFlash('index', 'err', 'Captcha verification failed. Please try again.');
+        }
+
         $username = strtolower(trim($_POST['authUserId'] ?? ''));
         $password = (string)($_POST['authPassword'] ?? '');
 

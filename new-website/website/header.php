@@ -10,6 +10,7 @@ $signedInUser = sinelec_get_signed_in_user();
 $isSignedIn = sinelec_is_signed_in();
 $userDisplayName = trim((string)($signedInUser['NAME'] ?? ''));
 $userFirstName = sinelec_account_first_name($signedInUser);
+$turnstileSiteKey = sinelec_env('SITE_KEY', '');
 
 function navClass(string $page, string $current): string {
     return $page === $current ? 'nav-link active' : 'nav-link';
@@ -81,6 +82,9 @@ $productMegaMenu = [
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
 <link rel="stylesheet" href="../assets/css/chatbot.css">
+<?php if ($turnstileSiteKey !== ''): ?>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<?php endif; ?>
 <script>
 window.STORE_DATA   = <?= json_encode($storeData ?? [], JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) ?>;
 window.CURRENT_PAGE = '<?= htmlspecialchars($currentPage) ?>';
@@ -325,74 +329,116 @@ window.FLASH_TOAST  = {
 <!-- ══════════ MOBILE MENU ════════════════════════════════════ -->
 <div class="mobile-menu" id="mobMenu" aria-hidden="true">
   <div class="mob-overlay" onclick="closeMobMenu()"></div>
-  <div class="mob-panel">
-	    <div class="mob-hd">
-	      <div class="mob-hd-title">
-	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-	        Hello, <?= htmlspecialchars($userFirstName) ?>
-	      </div>
-      <button class="mob-close" onclick="closeMobMenu()" aria-label="Close menu">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-	    <nav class="mob-nav">
-	      <?php if ($isSignedIn): ?>
-	      <div class="mob-section-title">My Account</div>
-	      <a href="profile" class="mob-link <?= $currentPage === 'profile' ? 'on' : '' ?>">Profile</a>
-	      <a href="my-orders" class="mob-link <?= $currentPage === 'my-orders' ? 'on' : '' ?>">My Order</a>
-	      <a href="delivery-address" class="mob-link <?= $currentPage === 'delivery-address' ? 'on' : '' ?>">Delivery Address</a>
-	      <a href="change-password" class="mob-link <?= $currentPage === 'change-password' ? 'on' : '' ?>">Change Password</a>
-	      <a href="service?urlstring=<?= EncryptURL('action=Logout') ?>" class="mob-link">Logout</a>
-	      <div class="mob-divider"></div>
-	      <?php endif; ?>
-	      <a href="index" class="mob-link <?= $currentPage === 'home' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        Home
-      </a>
-      <a href="products" class="mob-link <?= in_array($currentPage, ['products', 'product']) ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        All Products
-      </a>
-      <div class="mob-divider"></div>
-      <div class="mob-section-title">Shop by Category</div>
-      <div class="mob-cat-grid">
-        <a href="products?cat=mcu"        class="mob-cat-btn">Microcontrollers</a>
-        <a href="products?cat=sensor"     class="mob-cat-btn">Sensors</a>
-        <a href="products?cat=power"      class="mob-cat-btn">Power ICs</a>
-        <a href="products?cat=logic"      class="mob-cat-btn">Logic ICs</a>
-        <a href="products?cat=transistor" class="mob-cat-btn">Transistors</a>
-        <a href="products?cat=comm"       class="mob-cat-btn">Comm ICs</a>
-        <a href="products?cat=memory"     class="mob-cat-btn">Memory</a>
-        <a href="products?cat=passive"    class="mob-cat-btn">Passives</a>
-        <a href="products?cat=display"    class="mob-cat-btn">Display</a>
-        <a href="products?cat=opamp"      class="mob-cat-btn">Op-Amps</a>
-      </div>
-      <div class="mob-divider"></div>
-      <a href="chip-programming" class="mob-link <?= $currentPage === 'chip-programming' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M17 7l5 5-5 5M7 7l-5 5 5 5M14 3l-4 18"/></svg>
-        Chip Programming Service
-      </a>
-      <a href="manufacturers" class="mob-link <?= $currentPage === 'manufacturers' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
-        Manufacturers
-      </a>
-      <a href="about" class="mob-link <?= $currentPage === 'about' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/></svg>
-        About Sinelec
-      </a>
-      <a href="about#contact" class="mob-link <?= $currentPage === 'contact' ? 'on' : '' ?>">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07"/></svg>
-        Contact / Bulk Orders
-      </a>
-    </nav>
-    <div class="mob-footer-contact">
-      <a href="tel:+919876543210" class="mob-footer-phone">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81"/></svg>
-        +91-9876543210
-      </a>
-    </div>
-  </div>
-</div>
+	<div class="mob-panel">
+		    <div class="mob-hd">
+		      <div class="mob-hd-title">
+		        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+		        Hello, <?= htmlspecialchars($userFirstName) ?>
+		      </div>
+	      <button class="mob-close" onclick="closeMobMenu()" aria-label="Close menu">
+	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+	      </button>
+	    </div>
+		    <nav class="mob-nav">
+		      <div class="mob-quick-grid">
+		        <button type="button" class="mob-quick-card" onclick="closeMobMenu(); document.getElementById('headerDeliveryBtn')?.click();">
+		          <span class="mob-quick-icon">
+		            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+		          </span>
+		          <span class="mob-quick-copy">
+		            <strong>Delivery Location</strong>
+		            <small id="mobDeliveryLocationText">Delhi 110001</small>
+		          </span>
+		        </button>
+		        <button type="button" class="mob-quick-card" onclick="closeMobMenu(); document.getElementById('headerAccountBtn')?.click();">
+		          <span class="mob-quick-icon">
+		            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+		          </span>
+		          <span class="mob-quick-copy">
+		            <strong><?= $isSignedIn ? 'My Account' : 'Sign In / Register' ?></strong>
+		            <small><?= $isSignedIn ? htmlspecialchars($userDisplayName ?: $userFirstName) : 'Access account and orders' ?></small>
+		          </span>
+		        </button>
+		      </div>
+		      <div class="mob-divider"></div>
+		      <?php if ($isSignedIn): ?>
+		      <div class="mob-section-title">My Account</div>
+		      <a href="profile" class="mob-link <?= $currentPage === 'profile' ? 'on' : '' ?>">Profile</a>
+		      <a href="my-orders" class="mob-link <?= $currentPage === 'my-orders' ? 'on' : '' ?>">My Order</a>
+		      <a href="delivery-address" class="mob-link <?= $currentPage === 'delivery-address' ? 'on' : '' ?>">Delivery Address</a>
+		      <a href="change-password" class="mob-link <?= $currentPage === 'change-password' ? 'on' : '' ?>">Change Password</a>
+		      <a href="service?urlstring=<?= EncryptURL('action=Logout') ?>" class="mob-link">Logout</a>
+		      <div class="mob-divider"></div>
+		      <?php endif; ?>
+		      <div class="mob-section-title">Browse</div>
+		      <a href="index" class="mob-link <?= $currentPage === 'home' ? 'on' : '' ?>">
+	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+	        Home
+	      </a>
+	      <details class="mob-accordion" <?= in_array($currentPage, ['products', 'product', 'new-arrivals']) ? 'open' : '' ?>>
+	        <summary class="mob-link mob-link--accordion <?= in_array($currentPage, ['products', 'product', 'new-arrivals']) ? 'on' : '' ?>">
+	          <span class="mob-link-main">
+	            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+	            Products
+	          </span>
+	          <span class="mob-accordion-arrow" aria-hidden="true">
+	            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+	          </span>
+	        </summary>
+	        <div class="mob-accordion-body">
+	          <a href="products" class="mob-sub-link">All Products</a>
+	          <a href="new-arrivals" class="mob-sub-link">Newest Products</a>
+	          <?php foreach ($productMegaMenu as $menuCategory): ?>
+	          <a href="products?cat=<?= urlencode($menuCategory['id']) ?>" class="mob-sub-link"><?= htmlspecialchars($menuCategory['name']) ?></a>
+	          <?php endforeach; ?>
+	        </div>
+	      </details>
+	      <details class="mob-accordion" <?= $currentPage === 'manufacturers' ? 'open' : '' ?>>
+	        <summary class="mob-link mob-link--accordion <?= $currentPage === 'manufacturers' ? 'on' : '' ?>">
+	          <span class="mob-link-main">
+	            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+	            Manufacturers
+	          </span>
+	          <span class="mob-accordion-arrow" aria-hidden="true">
+	            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+	          </span>
+	        </summary>
+	        <div class="mob-accordion-body mob-accordion-body--chips">
+	          <a href="manufacturers" class="mob-sub-link">All Manufacturers</a>
+	          <?php foreach ($storeData['manufacturers'] as $mfr): ?>
+	          <a href="products?mfr=<?= urlencode($mfr['name']) ?>" class="mob-sub-link"><?= htmlspecialchars($mfr['name']) ?></a>
+	          <?php endforeach; ?>
+	        </div>
+	      </details>
+	      <details class="mob-accordion" <?= $currentPage === 'resources' || $currentPage === 'chip-programming' ? 'open' : '' ?>>
+	        <summary class="mob-link mob-link--accordion <?= $currentPage === 'resources' || $currentPage === 'chip-programming' ? 'on' : '' ?>">
+	          <span class="mob-link-main">
+	            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+	            Resources
+	          </span>
+	          <span class="mob-accordion-arrow" aria-hidden="true">
+	            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 12 15 18 9"/></svg>
+	          </span>
+	        </summary>
+	        <div class="mob-accordion-body">
+	          <a href="chip-programming" class="mob-sub-link">Chip Programming</a>
+	          <a href="resources#learning" class="mob-sub-link">Learning Material</a>
+	          <a href="resources#datasheets" class="mob-sub-link">Datasheets</a>
+	          <a href="resources#manuals" class="mob-sub-link">Manuals</a>
+	          <a href="resources#appnotes" class="mob-sub-link">Application Notes</a>
+	        </div>
+	      </details>
+	      <a href="request-a-quote" class="mob-link <?= $currentPage === 'request-a-quote' ? 'on' : '' ?>">
+	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+	        Request a Quote
+	      </a>
+	      <a href="about" class="mob-link <?= $currentPage === 'about' ? 'on' : '' ?>">
+	        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+	        E-Shop
+	      </a>
+	    </nav>
+	  </div>
+	</div>
 
 <!-- ══════════ DELIVERY LOCATION MODAL ═══════════════════════ -->
 <div class="delivery-modal" id="deliveryModal" hidden>
@@ -459,16 +505,18 @@ window.FLASH_TOAST  = {
         </label>
 
         <div class="auth-captcha auth-captcha-cloud">
+          <?php if ($turnstileSiteKey !== ''): ?>
+          <div class="turnstile-wrap">
+            <div class="cf-turnstile" data-sitekey="<?= htmlspecialchars($turnstileSiteKey) ?>" data-theme="light" data-size="flexible" data-action="login"></div>
+          </div>
+          <?php else: ?>
           <div class="auth-captcha-left">
             <span class="auth-captcha-ok">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
             </span>
-            <span>Success!</span>
+            <span>Captcha configuration missing</span>
           </div>
-          <div class="auth-captcha-brand">
-            <strong>CLOUDFLARE</strong>
-            <span>Privacy · Help</span>
-          </div>
+          <?php endif; ?>
         </div>
 
         <button type="submit" class="auth-primary-btn">Sign In</button>
@@ -569,16 +617,18 @@ window.FLASH_TOAST  = {
           </label>
 
           <div class="auth-captcha auth-captcha-cloud">
+            <?php if ($turnstileSiteKey !== ''): ?>
+            <div class="turnstile-wrap">
+              <div class="cf-turnstile" data-sitekey="<?= htmlspecialchars($turnstileSiteKey) ?>" data-theme="light" data-size="flexible" data-action="register"></div>
+            </div>
+            <?php else: ?>
             <div class="auth-captcha-left">
               <span class="auth-captcha-ok">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8"><polyline points="20 6 9 17 4 12"/></svg>
               </span>
-              <span>Success!</span>
+              <span>Captcha configuration missing</span>
             </div>
-            <div class="auth-captcha-brand">
-              <strong>CLOUDFLARE</strong>
-              <span>Privacy · Help</span>
-            </div>
+            <?php endif; ?>
           </div>
 
         <button type="submit" class="auth-primary-btn">Create Account</button>
