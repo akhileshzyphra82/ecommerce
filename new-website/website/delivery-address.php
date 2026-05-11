@@ -333,24 +333,151 @@ $mobile = '+' . trim((string)($user['COMMUNICATION_MOBILE_NUM_ISD'] ?? '49')) . 
     align-items: flex-start;
   }
   .account-form-actions {
-    flex-direction: column;
-    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: nowrap;
   }
   .account-form-actions .account-btn,
   .account-form-actions .account-btn-secondary {
-    width: 100%;
-    min-height: 38px;
+    width: auto;
+    flex: 1 1 0;
+    min-height: 34px;
+    font-size: 10px;
+    padding: 0 8px;
   }
-  .delivery-row-head,
-  .delivery-name-line,
+  .delivery-row-head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
   .delivery-type-wrap {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
   }
   .delivery-menu-pop {
-    right: auto;
-    left: 0;
+    right: 0;
+    left: auto;
     min-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .delivery-flat-surface {
+    padding: 10px;
+  }
+  .delivery-flat-surface h1 {
+    font-size: 1rem;
+    margin-bottom: 8px;
+  }
+  .delivery-add-toggle {
+    min-height: 40px;
+    padding: 0 10px;
+    gap: 8px;
+  }
+  .delivery-add-toggle span {
+    font-size: 18px;
+  }
+  .delivery-add-toggle strong {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .delivery-new-address-panel {
+    margin-top: 10px;
+    padding: 10px;
+  }
+  .delivery-form-grid {
+    gap: 8px;
+  }
+  .delivery-form-grid .account-field label {
+    font-size: 9.5px;
+  }
+  .delivery-form-grid .account-field input,
+  .delivery-form-grid .account-field textarea {
+    min-height: 36px;
+    font-size: 10.5px;
+  }
+  .delivery-form-grid .account-field textarea {
+    min-height: 72px;
+    padding: 9px 10px;
+  }
+  .delivery-check-wrap {
+    font-size: 10px;
+    gap: 6px;
+  }
+  .delivery-check-wrap input {
+    width: 13px;
+    height: 13px;
+  }
+  .account-form-actions .account-btn,
+  .account-form-actions .account-btn-secondary {
+    min-height: 32px;
+    font-size: 9.5px;
+    padding: 0 6px;
+  }
+  .delivery-list-box {
+    margin-top: 14px;
+  }
+  .delivery-row {
+    padding: 12px 10px;
+  }
+  .delivery-row-head {
+    gap: 6px;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .delivery-type-wrap {
+    gap: 6px;
+  }
+  .delivery-type-badge,
+  .delivery-default-badge {
+    min-height: 22px;
+    padding: 0 8px;
+    font-size: 8.5px;
+  }
+  .delivery-menu summary {
+    font-size: 18px;
+    width: 20px;
+  }
+  .delivery-menu-pop {
+    right: 0;
+    left: auto;
+    min-width: 118px;
+    padding: 5px;
+  }
+  .delivery-menu-pop button {
+    min-height: 28px;
+    font-size: 10px;
+  }
+  .delivery-name-line {
+    margin-top: 8px;
+    gap: 6px 10px;
+    font-size: 12px;
+  }
+  .delivery-line {
+    margin-top: 7px;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  .delivery-empty {
+    padding: 14px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 360px) {
+  .delivery-add-toggle strong {
+    font-size: 9.5px;
+  }
+  .delivery-menu-pop {
+    min-width: 108px;
+  }
+  .delivery-name-line {
+    font-size: 11px;
+  }
+  .delivery-line {
+    font-size: 10.5px;
   }
 }
 </style>

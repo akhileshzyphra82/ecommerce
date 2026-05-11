@@ -8,6 +8,22 @@ class WebsiteController
         $this->dbHelper = new MySQLDB();
     }
 
+    private function mapUserRow(object $user): array
+    {
+        return [
+            "user_id" => (int)($user->USER_ID ?? 0),
+            "name" => (string)($user->NAME ?? ''),
+            "email" => (string)($user->COMMUNICATION_EMAIL_ID ?? ''),
+            "user_type_id" => (int)($user->USER_TYPE_ID ?? 0),
+            "communication_mobile_num_isd" => (int)($user->COMMUNICATION_MOBILE_NUM_ISD ?? 0),
+            "communication_mobile_num" => (string)($user->COMMUNICATION_MOBILE_NUM ?? ''),
+            "company_name" => (string)($user->COMPANY_NAME ?? ''),
+            "designation" => (string)($user->DESIGNATION ?? ''),
+            "is_pwd_updated" => (bool)($user->IS_PWD_UPDATED ?? false),
+            "google_id" => (string)($user->GOOGLE_ID ?? ''),
+        ];
+    }
+
 
     public function InsertUserFromWebsite($arrUserData)
 	{
@@ -106,17 +122,7 @@ class WebsiteController
             $storedHash = (string)($user->ERP_PASSWORD ?? '');
 
             if ($storedHash !== '' && password_verify($password, $storedHash)) {
-                return [
-                    "user_id" => (int)$user->USER_ID,
-                    "name" => (string)($user->NAME ?? ''),
-                    "email" => (string)($user->COMMUNICATION_EMAIL_ID ?? ''),
-                    "user_type_id" => (int)($user->USER_TYPE_ID ?? 0),
-                    "communication_mobile_num_isd" => (int)($user->COMMUNICATION_MOBILE_NUM_ISD ?? 0),
-                    "communication_mobile_num" => (int)($user->COMMUNICATION_MOBILE_NUM ?? 0)  ,
-                    "company_name" => (string)($user->COMPANY_NAME ?? ''),
-                    "designation" => (string)($user->DESIGNATION ?? '') ,
-                    "is_pwd_updated" => (bool)($user->IS_PWD_UPDATED ?? false)
-                ];
+                return $this->mapUserRow($user);
             }
 
             return [];
@@ -130,6 +136,97 @@ class WebsiteController
                 "status" => false,
                 "message" => "Something went wrong during login. Please try again."
             ];
+        }
+    }
+
+    public function loginOrRegisterGoogleUser(string $googleId, string $email, string $name): array
+    {
+        try {
+            $googleId = addslashes(trim($googleId));
+            $email = addslashes(strtolower(trim($email)));
+            $name = addslashes(trim($name));
+
+            if ($googleId === '' || $email === '') {
+                return [];
+            }
+
+            if ($name === '') {
+                $name = 'Google User';
+            }
+
+            $findByGoogleQuery = "SELECT * FROM tbl_user WHERE google_id='" . $googleId . "' LIMIT 1";
+            $googleUsers = $this->dbHelper->select($findByGoogleQuery);
+            if (!empty($googleUsers)) {
+                return $this->mapUserRow($googleUsers[0]);
+            }
+
+            $findByEmailQuery = "SELECT * FROM tbl_user WHERE communication_email_id='" . $email . "' LIMIT 1";
+            $emailUsers = $this->dbHelper->select($findByEmailQuery);
+            if (!empty($emailUsers)) {
+                $existing = $emailUsers[0];
+                $existingUserId = (int)($existing->USER_ID ?? 0);
+
+                if ($existingUserId > 0) {
+                    $updateGoogleQuery = "UPDATE tbl_user SET google_id='" . $googleId . "' WHERE user_id=" . $existingUserId . " LIMIT 1";
+                    $this->dbHelper->update($updateGoogleQuery);
+                }
+
+                $existing->GOOGLE_ID = $googleId;
+                return $this->mapUserRow($existing);
+            }
+
+            $randomPassword = bin2hex(random_bytes(16));
+            $passwordHash = password_hash($randomPassword, PASSWORD_DEFAULT);
+            if ($passwordHash === false) {
+                return [];
+            }
+
+            $activationKey = 'GOOGLE_' . bin2hex(random_bytes(8));
+            $insertQuery = "INSERT INTO tbl_user (
+                user_type_id,
+                `name`,
+                communication_mobile_num_isd,
+                communication_mobile_num,
+                communication_email_id,
+                erp_password,
+                company_name,
+                designation,
+                account_activation_flag,
+                random_activation_key,
+                verified_flag,
+                is_pwd_updated,
+                google_id
+            ) VALUES (
+                2,
+                '" . $name . "',
+                0,
+                NULL,
+                '" . $email . "',
+                '" . addslashes($passwordHash) . "',
+                NULL,
+                NULL,
+                '1',
+                '" . addslashes($activationKey) . "',
+                'Yes',
+                1,
+                '" . $googleId . "'
+            )";
+
+            $newUserId = (int)$this->dbHelper->insert($insertQuery);
+            if ($newUserId <= 0) {
+                return [];
+            }
+
+            $findByIdQuery = "SELECT * FROM tbl_user WHERE user_id=" . $newUserId . " LIMIT 1";
+            $newUsers = $this->dbHelper->select($findByIdQuery);
+            if (empty($newUsers)) {
+                return [];
+            }
+
+            return $this->mapUserRow($newUsers[0]);
+        } catch (Exception $e) {
+            error_log("Google auth error: " . $e->getMessage());
+            return [];
         }
     }
 
@@ -387,6 +484,30 @@ class WebsiteController
 
 
 
+
+    public function resetUserPasswordByEmail(string $email, string $newPassword): bool
+    {
+        try {
+            $email = addslashes(strtolower(trim($email)));
+            if ($email === '') {
+                return false;
+            }
+
+            $newHash = password_hash($newPassword, PASSWORD_DEFAULT);
+            if ($newHash === false) {
+                error_log('resetUserPasswordByEmail: password hashing failed');
+                return false;
+            }
+
+            $query = "UPDATE tbl_user SET erp_password='" . addslashes($newHash) . "', is_pwd_updated='1' WHERE communication_email_id='" . $email . "' LIMIT 1";
+            $rows = $this->dbHelper->update($query);
+            return $rows > 0;
+
+        } catch (Exception $e) {
+            error_log('resetUserPasswordByEmail error: ' . $e->getMessage());
+            return false;
+        }
+    }
 
     // public function deleteFAQData($faqId)
     // {

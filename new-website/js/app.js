@@ -1845,8 +1845,9 @@ function initAuthModal() {
     });
   });
 
-  forgotBtn?.addEventListener('click', () => {
-    toast('Password recovery link flow will be available soon.', 'warn');
+  forgotBtn?.addEventListener('click', e => {
+    e.preventDefault();
+    window.location.href = 'forgot-password';
   });
 
   passToggles.forEach(btn => {

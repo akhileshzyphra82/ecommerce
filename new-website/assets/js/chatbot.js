@@ -30,10 +30,13 @@
   let hasAutoOpened = false;
   let suggestionsExpanded = false;
   let thinkingTimer = null;
+  let isTouchTriggering = false;
 
   function setOpenState(isOpen) {
     root.classList.toggle('is-open', isOpen);
+    root.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
     windowEl.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    document.body.classList.toggle('sinela-chat-open', isOpen);
     if (isOpen) {
       window.setTimeout(() => input.focus(), 180);
     }
@@ -118,7 +121,10 @@
   }
 
   function removeThinkingMessage() {
-    document.getElementById('sinelaChatbotThinking')?.remove();
+    const thinking = document.getElementById('sinelaChatbotThinking');
+    if (thinking && thinking.parentNode) {
+      thinking.parentNode.removeChild(thinking);
+    }
   }
 
   function addGreeting() {
@@ -270,10 +276,27 @@
     input.value = '';
   }
 
-  fab.addEventListener('click', () => {
+  function openChat(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
     addGreeting();
     setOpenState(true);
+  }
+
+  fab.addEventListener('click', event => {
+    if (isTouchTriggering) return;
+    openChat(event);
   });
+
+  fab.addEventListener('touchend', event => {
+    isTouchTriggering = true;
+    openChat(event);
+    window.setTimeout(() => {
+      isTouchTriggering = false;
+    }, 250);
+  }, { passive: false });
 
   closeBtn.addEventListener('click', () => {
     setOpenState(false);

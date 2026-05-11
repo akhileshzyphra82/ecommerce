@@ -523,7 +523,7 @@ window.FLASH_TOAST  = {
       </form>
 
       <div class="auth-sep"><span>or</span></div>
-      <button type="button" class="auth-google-btn">
+      <a href="service?urlstring=<?= EncryptURL('action=GoogleLogin') ?>" class="auth-google-btn">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
           <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.656 32.657 29.205 36 24 36c-6.627 0-12-5.373-12-12S17.373 12 24 12c3.06 0 5.849 1.154 7.971 3.029l5.657-5.657C34.053 6.053 29.277 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
           <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 16.108 19.013 12 24 12c3.06 0 5.849 1.154 7.971 3.029l5.657-5.657C34.053 6.053 29.277 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
@@ -531,11 +531,11 @@ window.FLASH_TOAST  = {
           <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.094 5.565l.003-.002 6.19 5.238C37.005 39.163 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
         </svg>
         Continue with Google
-      </button>
+      </a>
 
       <div class="auth-links-row">
         <button type="button" class="auth-link-btn" data-auth-switch="signup">Create new account</button>
-        <button type="button" class="auth-link-btn" id="authForgotBtn">Forgot password</button>
+        <a href="forgot-password" class="auth-link-btn" id="authForgotBtn" data-loader="off">Forgot password</a>
       </div>
 
       <?php if ($isSignedIn): ?>
@@ -634,7 +634,7 @@ window.FLASH_TOAST  = {
         <button type="submit" class="auth-primary-btn">Create Account</button>
       </form>
       <div class="auth-sep"><span>or</span></div>
-      <button type="button" class="auth-google-btn">
+      <a href="service?urlstring=<?= EncryptURL('action=GoogleLogin') ?>" class="auth-google-btn">
         <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
           <path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303C33.656 32.657 29.205 36 24 36c-6.627 0-12-5.373-12-12S17.373 12 24 12c3.06 0 5.849 1.154 7.971 3.029l5.657-5.657C34.053 6.053 29.277 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/>
           <path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 16.108 19.013 12 24 12c3.06 0 5.849 1.154 7.971 3.029l5.657-5.657C34.053 6.053 29.277 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/>
@@ -642,7 +642,7 @@ window.FLASH_TOAST  = {
           <path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.094 5.565l.003-.002 6.19 5.238C37.005 39.163 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/>
         </svg>
         Continue with Google
-      </button>
+      </a>
 
       <div class="auth-links-row auth-links-row-center">
         <span>Already have account?</span>

@@ -202,9 +202,32 @@ require_once __DIR__ . '/header.php';
   color: #6e86a0;
   font-size: 11px;
 }
+.password-panel .account-form-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+}
+.password-panel .account-form-actions .account-btn,
+.password-panel .account-form-actions .account-btn-secondary {
+  flex: 1 1 0;
+  min-width: 0;
+}
 @media (max-width: 760px) {
   .password-form-grid {
     grid-template-columns: 1fr;
+  }
+  .password-panel .account-form-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 6px;
+  }
+  .password-panel .account-form-actions .account-btn,
+  .password-panel .account-form-actions .account-btn-secondary {
+    width: auto;
+    min-height: 36px;
+    font-size: 11px;
+    padding-inline: 8px;
   }
 }
 </style>

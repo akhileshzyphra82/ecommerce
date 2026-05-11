@@ -475,6 +475,14 @@ void loop() {
         <div class="sec-title">Related Products</div>
         <div class="sec-subtitle">Customers also viewed</div>
       </div>
+      <div class="carousel-nav-btns">
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('relatedTrack', 1)" aria-label="Previous related products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="car-btn car-btn-inline" onclick="carouselScroll('relatedTrack', -1)" aria-label="Next related products">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
     </div>
     <div class="prod-carousel">
       <div class="prod-carousel-track-wrap">

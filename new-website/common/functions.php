@@ -601,6 +601,292 @@ function sinelec_env(string $key, ?string $default = null): ?string
 	return $envCache[$key] ?? $default;
 }
 
+function sinelec_otp_email_html(string $email, string $otp, string $year, string $heading, string $intro): string
+{
+    $emailEsc   = htmlspecialchars($email);
+    $headingEsc = htmlspecialchars($heading);
+    $introEsc   = htmlspecialchars($intro);
+    $yearEsc    = htmlspecialchars($year);
+
+    return <<<HTML
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:0;background:#EEF2F7;font-family:'Segoe UI',Inter,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#EEF2F7;padding:32px 0">
+  <tr><td align="center">
+    <table width="520" cellpadding="0" cellspacing="0" style="background:#FFFFFF;border-radius:14px;overflow:hidden;max-width:520px;box-shadow:0 4px 24px rgba(0,0,0,0.10)">
+      <tr>
+        <td style="background:#0a1a30;padding:26px 36px;text-align:center">
+          <p style="margin:0;color:#FFFFFF;font-size:20px;font-weight:700;letter-spacing:0.5px">Sinelec Technologies</p>
+          <p style="margin:4px 0 0;color:#7A9BC0;font-size:12px">India's Premier Semiconductor Store</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:36px 36px 24px">
+          <h2 style="margin:0 0 12px;color:#0a1a30;font-size:22px;font-weight:700">{$headingEsc}</h2>
+          <p style="margin:0 0 24px;color:#4A5568;font-size:15px;line-height:1.7">{$introEsc} for <strong>{$emailEsc}</strong>.<br>Use the OTP below to continue. This code expires in <strong>10 minutes</strong>.</p>
+          <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="background:#EBF3FF;border:2px dashed #0f5ebf;border-radius:12px;padding:24px;text-align:center">
+                <p style="margin:0 0 8px;color:#0f5ebf;font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase">Your One-Time Password</p>
+                <p style="margin:0;font-size:44px;font-weight:800;letter-spacing:18px;color:#0f5ebf;font-family:'Courier New',Courier,monospace">{$otp}</p>
+              </td>
+            </tr>
+          </table>
+          <p style="margin:24px 0 8px;color:#718096;font-size:13px;line-height:1.7">&#9200; Valid for <strong>10 minutes</strong> only. Do not share this code with anyone.</p>
+          <p style="margin:0;color:#718096;font-size:13px;line-height:1.7">&#128274; If you did not request this, you can safely ignore this email. Your account is secure.</p>
+        </td>
+      </tr>
+      <tr>
+        <td style="background:#F7F9FC;padding:16px 36px;text-align:center;border-top:1px solid #E2E8F0">
+          <p style="margin:0;color:#A0AEC0;font-size:12px">&copy; {$yearEsc} Sinelec Technologies. All rights reserved.</p>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+</table>
+</body>
+</html>
+HTML;
+}
+
+/**
+ * Send one or more emails via SMTP.
+ *
+ * @param array $recipients  Each item: ['to_mail_id'=>'', 'subject'=>'', 'body'=>'']
+ *                           Body can be HTML. Works for single or multiple recipients.
+ */
+function sinelec_send_mail(array $recipients): bool
+{
+    if (empty($recipients)) {
+        return true;
+    }
+
+    $host       = (string)sinelec_env('MAIL_HOST', '');
+    $port       = (int)sinelec_env('MAIL_PORT', '465');
+    $username   = (string)sinelec_env('MAIL_USERNAME', '');
+    $password   = (string)sinelec_env('MAIL_PASSWORD', '');
+    $encryption = strtolower((string)sinelec_env('MAIL_ENCRYPTION', 'ssl'));
+    $fromAddr   = (string)sinelec_env('MAIL_FROM_ADDRESS', $username);
+    $fromName   = (string)sinelec_env('MAIL_FROM_NAME', 'Sinelec Technologies');
+
+    if ($host === '' || $username === '' || $password === '') {
+        error_log('sinelec_send_mail: SMTP configuration is incomplete.');
+        return false;
+    }
+
+    $allSuccess = true;
+
+    foreach ($recipients as $item) {
+        $toEmail = trim((string)($item['to_mail_id'] ?? ''));
+        $subject = trim((string)($item['subject'] ?? '(no subject)'));
+        $body    = (string)($item['body'] ?? '');
+
+        if ($toEmail === '' || !filter_var($toEmail, FILTER_VALIDATE_EMAIL)) {
+            error_log('sinelec_send_mail: skipping invalid or empty address — ' . $toEmail);
+            continue;
+        }
+
+        $sent = sinelec_smtp_deliver(
+            $host, $port, $encryption,
+            $username, $password,
+            $fromAddr, $fromName,
+            $toEmail, $subject, $body
+        );
+
+        if (!$sent) {
+            $allSuccess = false;
+        }
+    }
+
+    return $allSuccess;
+}
+
+/**
+ * Low-level SMTP delivery over a single connection.
+ * Supports implicit SSL (port 465) and STARTTLS (port 587).
+ */
+function sinelec_smtp_deliver(
+    string $host,
+    int    $port,
+    string $encryption,
+    string $username,
+    string $password,
+    string $fromAddr,
+    string $fromName,
+    string $toAddr,
+    string $subject,
+    string $bodyHtml
+): bool {
+    $timeout = 20;
+    $errno   = 0;
+    $errstr  = '';
+
+    $sslContext = stream_context_create([
+        'ssl' => [
+            'verify_peer'       => false,
+            'verify_peer_name'  => false,
+            'allow_self_signed' => true,
+        ],
+    ]);
+
+    if ($encryption === 'ssl') {
+        $conn = @stream_socket_client(
+            "ssl://{$host}:{$port}", $errno, $errstr, $timeout,
+            STREAM_CLIENT_CONNECT, $sslContext
+        );
+    } else {
+        $conn = @stream_socket_client(
+            "{$host}:{$port}", $errno, $errstr, $timeout,
+            STREAM_CLIENT_CONNECT
+        );
+    }
+
+    if (!is_resource($conn)) {
+        error_log("sinelec_smtp_deliver: connect failed [{$errno}] {$errstr}");
+        return false;
+    }
+
+    stream_set_timeout($conn, $timeout);
+
+    $read = static function () use ($conn): string {
+        $buf = '';
+        while (!feof($conn)) {
+            $line = fgets($conn, 1024);
+            if ($line === false) {
+                break;
+            }
+            $buf .= $line;
+            if (strlen($line) >= 4 && $line[3] === ' ') {
+                break;
+            }
+        }
+        return $buf;
+    };
+
+    $cmd = static function (string $c) use ($conn, $read): string {
+        fputs($conn, $c . "\r\n");
+        return $read();
+    };
+
+    $code = static function (string $r): int {
+        return (int)substr(trim($r), 0, 3);
+    };
+
+    // Banner
+    $banner = $read();
+    if ($code($banner) !== 220) {
+        error_log("sinelec_smtp_deliver: unexpected banner: {$banner}");
+        fclose($conn);
+        return false;
+    }
+
+    // EHLO
+    $r = $cmd('EHLO ' . (gethostname() ?: 'localhost'));
+    if ($code($r) !== 250) {
+        error_log("sinelec_smtp_deliver: EHLO failed: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    // STARTTLS upgrade for port 587 / tls
+    if ($encryption === 'tls') {
+        $r = $cmd('STARTTLS');
+        if ($code($r) !== 220) {
+            error_log("sinelec_smtp_deliver: STARTTLS failed: {$r}");
+            fclose($conn);
+            return false;
+        }
+        if (!stream_socket_enable_crypto($conn, true, STREAM_CRYPTO_METHOD_TLS_CLIENT)) {
+            error_log('sinelec_smtp_deliver: TLS crypto handshake failed');
+            fclose($conn);
+            return false;
+        }
+        $cmd('EHLO ' . (gethostname() ?: 'localhost'));
+    }
+
+    // AUTH LOGIN
+    $r = $cmd('AUTH LOGIN');
+    if ($code($r) !== 334) {
+        error_log("sinelec_smtp_deliver: AUTH LOGIN init failed: {$r}");
+        fclose($conn);
+        return false;
+    }
+    $cmd(base64_encode($username));
+    $r = $cmd(base64_encode($password));
+    if ($code($r) !== 235) {
+        error_log("sinelec_smtp_deliver: AUTH credentials rejected: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    // MAIL FROM
+    $r = $cmd("MAIL FROM:<{$fromAddr}>");
+    if ($code($r) !== 250) {
+        error_log("sinelec_smtp_deliver: MAIL FROM rejected: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    // RCPT TO
+    $r = $cmd("RCPT TO:<{$toAddr}>");
+    if ($code($r) !== 250) {
+        error_log("sinelec_smtp_deliver: RCPT TO rejected for {$toAddr}: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    // DATA
+    $r = $cmd('DATA');
+    if ($code($r) !== 354) {
+        error_log("sinelec_smtp_deliver: DATA init rejected: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    // Build multipart/alternative MIME message
+    $boundary   = '----=_Part_' . md5(uniqid('sinelec', true));
+    $encSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+    $encFrom    = '=?UTF-8?B?' . base64_encode($fromName) . '?= <' . $fromAddr . '>';
+    $plainText  = strip_tags(str_replace(
+        ['<br>', '<br/>', '<br />', '</p>', '</li>', '</h1>', '</h2>', '</h3>'],
+        ["\n",   "\n",    "\n",     "\n\n", "\n",    "\n",    "\n",    "\n"],
+        $bodyHtml
+    ));
+
+    $headers  = "Date: " . date('r') . "\r\n";
+    $headers .= "From: {$encFrom}\r\n";
+    $headers .= "To: {$toAddr}\r\n";
+    $headers .= "Subject: {$encSubject}\r\n";
+    $headers .= "MIME-Version: 1.0\r\n";
+    $headers .= "Content-Type: multipart/alternative; boundary=\"{$boundary}\"\r\n";
+    $headers .= "X-Mailer: Sinelec-PHP-Mailer/1.0\r\n";
+
+    $mime  = "--{$boundary}\r\n";
+    $mime .= "Content-Type: text/plain; charset=UTF-8\r\n";
+    $mime .= "Content-Transfer-Encoding: base64\r\n\r\n";
+    $mime .= chunk_split(base64_encode($plainText)) . "\r\n";
+    $mime .= "--{$boundary}\r\n";
+    $mime .= "Content-Type: text/html; charset=UTF-8\r\n";
+    $mime .= "Content-Transfer-Encoding: base64\r\n\r\n";
+    $mime .= chunk_split(base64_encode($bodyHtml)) . "\r\n";
+    $mime .= "--{$boundary}--";
+
+    // Send message body + end-of-data marker
+    fputs($conn, $headers . "\r\n" . $mime . "\r\n.\r\n");
+    $r = $read();
+    if ($code($r) !== 250) {
+        error_log("sinelec_smtp_deliver: message body rejected: {$r}");
+        fclose($conn);
+        return false;
+    }
+
+    $cmd('QUIT');
+    fclose($conn);
+    return true;
+}
+
 function sinelec_validate_turnstile(string $token, ?string $remoteIp = null): array
 {
 	$secretKey = sinelec_env('SECRET_KEY');

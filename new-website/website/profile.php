@@ -162,6 +162,17 @@ $avatarChar = strtoupper(substr(sinelec_account_first_name($user), 0, 1));
   border-radius: 16px;
   font-size: 22px;
 }
+.profile-form-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 8px;
+}
+.profile-form-actions .account-btn,
+.profile-form-actions .account-btn-secondary {
+  flex: 1 1 0;
+  min-width: 0;
+}
 @media (max-width: 768px) {
   .account-main {
     gap: 0;
@@ -180,6 +191,19 @@ $avatarChar = strtoupper(substr(sinelec_account_first_name($user), 0, 1));
   }
   .profile-hero p {
     font-size: 11px;
+  }
+  .profile-form-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 6px;
+  }
+  .profile-form-actions .account-btn,
+  .profile-form-actions .account-btn-secondary {
+    width: auto;
+    min-height: 36px;
+    font-size: 11px;
+    padding-inline: 8px;
   }
 }
 </style>

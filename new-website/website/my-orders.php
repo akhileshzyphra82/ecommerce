@@ -318,13 +318,58 @@ $deliveredOrders = sinelec_orders_by_status('delivered');
   .orders-shell {
     padding: 12px;
   }
+  .orders-page-head h1 {
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .orders-page-head p {
+    font-size: 10px;
+    line-height: 1.4;
+  }
   .orders-tab-row {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    padding: 4px;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .orders-tab-btn {
+    min-height: 32px;
+    font-size: 10.5px;
+    padding: 0 10px;
+  }
+  .order-list-card {
+    padding: 10px;
+    gap: 10px;
+  }
+  .order-list-product h2 {
+    font-size: 13px;
+    line-height: 1.3;
+  }
+  .order-list-muted {
+    margin-top: 5px;
+    font-size: 10px;
+    line-height: 1.35;
+  }
+  .order-list-price strong {
+    font-size: 14px;
+  }
+  .order-list-status h3 {
+    font-size: 12px;
+    gap: 8px;
+  }
+  .order-list-status p {
+    font-size: 10px;
+    margin-top: 6px;
+  }
+  .status-dot {
+    width: 12px;
+    height: 12px;
+    border-width: 3px;
   }
   .order-list-actions a {
-    min-height: 32px;
-    padding-inline: 10px;
-    font-size: 12px;
+    min-height: 28px;
+    padding-inline: 8px;
+    font-size: 10px;
   }
 }
 </style>
